@@ -7,10 +7,10 @@ interface ProgressBarProps {
 }
 
 const colorClasses = {
-  blue: 'bg-blue-600',
-  green: 'bg-green-600',
-  red: 'bg-red-600',
-  yellow: 'bg-yellow-600',
+  blue: 'bg-gradient-to-r from-blue-500 to-blue-600',
+  green: 'bg-gradient-to-r from-green-500 to-green-600',
+  red: 'bg-gradient-to-r from-red-500 to-red-600',
+  yellow: 'bg-gradient-to-r from-yellow-500 to-yellow-600',
 };
 
 const sizeClasses = {
@@ -38,10 +38,13 @@ export default function ProgressBar({
           )}
         </div>
       )}
-      <div className={`w-full bg-gray-200 rounded-full ${sizeClasses[size]}`}>
+      <div className={`w-full bg-gray-200 rounded-full ${sizeClasses[size]} overflow-hidden shadow-inner`}>
         <div
-          className={`${colorClasses[color]} ${sizeClasses[size]} rounded-full transition-all duration-300 ease-out`}
-          style={{ width: `${clampedProgress}%` }}
+          className={`${colorClasses[color]} ${sizeClasses[size]} rounded-full transition-all duration-500 ease-in-out transform origin-left animate-pulse shadow-sm`}
+          style={{ 
+            width: `${clampedProgress}%`,
+            animation: clampedProgress > 0 && clampedProgress < 100 ? 'pulse 2s infinite' : 'none'
+          }}
         />
       </div>
     </div>

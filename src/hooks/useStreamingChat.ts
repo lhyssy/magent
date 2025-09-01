@@ -7,14 +7,13 @@ const presetReplies = [
   // 消息 2: 收到主诉后，明确指派任务
   '谢谢您愿意分享这些感受，听起来这段时间您过得相当不容易。我已指派我的文本与病史分析师开始对您的描述进行深度语义分析。您现在可以在左侧面板看到它的工作状态。',
 
-  // 消息 3: 引导视频录制，并解释原因
   '为了能更深入地理解您的感受，而不仅仅是通过文字，我能邀请您录制一段简短的视频，谈谈这些情绪对您生活的影响吗？有时候，非语言的表达能传递更多信息。我将指派我的音频与视频分析师共同进行分析。',
 
   // 消息 4: 视频分析后的初步综合评估
   '谢谢您。我的音频与视频分析师已经完成了分析。现在，我整合了他们与文本与病史分析师的初步报告：无论是从您的亲口叙述，还是声音、表情中的细微线索，所有信息都一致地指向了您当前正经历着一次显著的抑郁心境。',
   
   // 消息 5: 循循善诱地提出关键问题
-  `【一同回顾与探索】为了能够更完整地理解您当前的状态，我们有时需要回顾一下过去。这就像是了解一幅画的全貌，不仅要看阴影，也要看光亮的部分。
+  ` 【一同回顾与探索】为了能够更完整地理解您当前的状态，我们有时需要回顾一下过去。这就像是了解一幅画的全貌，不仅要看阴影，也要看光亮的部分。
 
 如果可以的话，我想邀请您一同回忆一下：在过去的一年里，您是否也经历过与之完全相反的、一段精力异常充沛的时期呢？哪怕只有几天，您感觉自己情绪高涨、思维敏捷，甚至不太需要睡觉。任何类似的经历，对我们来说都非常有价值。`,
 
@@ -152,8 +151,8 @@ export function useStreamingChat(options: UseStreamingChatOptions = {}) {
       const currentResponse = presetReplies[replyIndexRef.current % presetReplies.length];
       replyIndexRef.current += 1; // 移动到下一个回复
       
-      // 生成10-20秒的随机思考时间
-      const thinkingDelay = Math.floor(Math.random() * 10000) + 10000; // 10000-20000毫秒
+      // 生成20-30秒的随机思考时间
+      const thinkingDelay = Math.floor(Math.random() * 10000) + 20000; // 20000-30000毫秒
       
       // 思考延时
       setTimeout(() => {
@@ -173,8 +172,8 @@ export function useStreamingChat(options: UseStreamingChatOptions = {}) {
         
         // 模拟流式输出，每次输出几个字符
         let currentIndex = 0;
-        const chunkSize = 1; // 减少每次输出的字符数，使输出更慢
-        const delay = 120; // 增加延迟时间，使输出更慢
+        const chunkSize = 2; // 每次输出2个字符，提升打字机效果流畅度
+        const delay = 80; // 优化延迟时间，使输出更自然
         
         const streamText = () => {
           if (abortControllerRef.current?.signal.aborted) {

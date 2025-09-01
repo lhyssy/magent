@@ -401,35 +401,42 @@ export default function Chat() {
       return agent
     }))
     
-    // 为不同智能体设置不同的分析时间
+    // 为不同智能体设置不同的分析时间（统一调整为20-30秒随机完成）
     const getAnalysisSteps = (agentId: string) => {
-      // FNIRS分析师、音频分析师、视频分析师需要约1分钟
+      // 生成20-30秒的随机完成时间
+      const randomDuration = Math.floor(Math.random() * 10000) + 20000; // 20000-30000毫秒
+      const step1 = Math.floor(randomDuration * 0.2);
+      const step2 = Math.floor(randomDuration * 0.4);
+      const step3 = Math.floor(randomDuration * 0.6);
+      const step4 = Math.floor(randomDuration * 0.8);
+      const step5 = randomDuration;
+      
+      // 根据智能体类型设置不同的任务描述
       if (['fnirs-analyst', 'audio-analyst', 'video-analyst'].includes(agentId)) {
         return [
-          { delay: 5000, progress: 15, task: '数据预处理...' },
-          { delay: 10000, progress: 25, task: '特征提取中...' },
-          { delay: 15000, progress: 40, task: '模式识别分析...' },
-          { delay: 25000, progress: 55, task: '深度学习推理...' },
-          { delay: 35000, progress: 70, task: '结果验证中...' },
-          { delay: 45000, progress: 85, task: '生成分析报告...' },
-          { delay: 60000, progress: 100, task: '分析完成', status: 'completed' }
+          { delay: step1, progress: 20, task: '数据预处理...' },
+          { delay: step2, progress: 40, task: '特征提取中...' },
+          { delay: step3, progress: 60, task: '模式识别分析...' },
+          { delay: step4, progress: 80, task: '深度学习推理...' },
+          { delay: step5, progress: 100, task: '分析完成', status: 'completed' }
         ]
       }
-      // 文本与病理分析师需要约30秒
       if (agentId === 'text-pathology-analyst') {
         return [
-          { delay: 3000, progress: 20, task: '文本解析中...' },
-          { delay: 8000, progress: 40, task: '病理特征提取...' },
-          { delay: 15000, progress: 60, task: '病理模式分析...' },
-          { delay: 22000, progress: 80, task: '诊断结果生成...' },
-          { delay: 30000, progress: 100, task: '分析完成', status: 'completed' }
+          { delay: step1, progress: 20, task: '文本解析中...' },
+          { delay: step2, progress: 40, task: '病理特征提取...' },
+          { delay: step3, progress: 60, task: '病理模式分析...' },
+          { delay: step4, progress: 80, task: '诊断结果生成...' },
+          { delay: step5, progress: 100, task: '分析完成', status: 'completed' }
         ]
       }
-      // 其他智能体保持较快速度
+      // 其他智能体使用通用任务描述
       return [
-        { delay: 2000, progress: 30, task: '正在分析数据...' },
-        { delay: 4000, progress: 70, task: '深度分析中...' },
-        { delay: 6000, progress: 100, task: '分析完成', status: 'completed' }
+        { delay: step1, progress: 20, task: '正在分析数据...' },
+        { delay: step2, progress: 40, task: '特征识别中...' },
+        { delay: step3, progress: 60, task: '深度分析中...' },
+        { delay: step4, progress: 80, task: '结果生成中...' },
+        { delay: step5, progress: 100, task: '分析完成', status: 'completed' }
       ]
     }
     
@@ -531,30 +538,36 @@ export default function Chat() {
         
         if (targetAgent) {
           const getProgressSteps = (agentId: string) => {
-            // FNIRS分析师、音频分析师、视频分析师需要约1分钟
+            // 生成20-30秒的随机完成时间
+            const randomDuration = Math.floor(Math.random() * 10000) + 20000; // 20000-30000毫秒
+            const step1 = Math.floor(randomDuration * 0.25);
+            const step2 = Math.floor(randomDuration * 0.5);
+            const step3 = Math.floor(randomDuration * 0.75);
+            const step4 = randomDuration;
+            
+            // 根据智能体类型设置不同的任务描述
             if (['fnirs-analyst', 'audio-analyst', 'video-analyst'].includes(agentId)) {
               return [
-                { delay: 8000, progress: 25, task: '数据预处理完成...' },
-                { delay: 18000, progress: 45, task: '特征提取中...' },
-                { delay: 30000, progress: 65, task: '模式分析中...' },
-                { delay: 45000, progress: 85, task: '结果验证中...' },
-                { delay: 60000, progress: 100, task: '分析完成', status: 'completed' }
+                { delay: step1, progress: 25, task: '数据预处理完成...' },
+                { delay: step2, progress: 50, task: '特征提取中...' },
+                { delay: step3, progress: 75, task: '模式分析中...' },
+                { delay: step4, progress: 100, task: '分析完成', status: 'completed' }
               ]
             }
-            // 文本与病理分析师需要约30秒
             if (agentId === 'text-pathology-analyst') {
               return [
-                { delay: 5000, progress: 25, task: '文本解析完成...' },
-                { delay: 12000, progress: 50, task: '病理特征识别...' },
-                { delay: 20000, progress: 75, task: '病理模式匹配...' },
-                { delay: 30000, progress: 100, task: '分析完成', status: 'completed' }
+                { delay: step1, progress: 25, task: '文本解析完成...' },
+                { delay: step2, progress: 50, task: '病理特征识别...' },
+                { delay: step3, progress: 75, task: '病理模式匹配...' },
+                { delay: step4, progress: 100, task: '分析完成', status: 'completed' }
               ]
             }
-            // 文本分析师等保持较快速度
+            // 其他智能体使用通用任务描述
             return [
-              { delay: 3000, progress: 40, task: '语义分析中...' },
-              { delay: 6000, progress: 80, task: '深度分析中...' },
-              { delay: 8000, progress: 100, task: '分析完成', status: 'completed' }
+              { delay: step1, progress: 25, task: '语义分析中...' },
+              { delay: step2, progress: 50, task: '特征识别中...' },
+              { delay: step3, progress: 75, task: '深度分析中...' },
+              { delay: step4, progress: 100, task: '分析完成', status: 'completed' }
             ]
           }
           
@@ -849,7 +862,7 @@ export default function Chat() {
                   <Bot className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-lg lg:text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">MAgent 智能诊断助手</h1>
+                  <h1 className="text-lg lg:text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">连心智诊师</h1>
                   <p className="text-xs lg:text-sm text-gray-600 flex items-center mt-1 hidden sm:flex">
                     <Sparkles className="w-4 h-4 mr-1 text-indigo-500" />
                     多智能体协作诊断系统

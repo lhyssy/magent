@@ -401,10 +401,10 @@ export default function Chat() {
       return agent
     }))
     
-    // 为不同智能体设置不同的分析时间（统一调整为20-30秒随机完成）
+    // 为不同智能体设置不同的分析时间（统一调整为20秒内完成）
     const getAnalysisSteps = (agentId: string) => {
-      // 生成20-30秒的随机完成时间
-      const randomDuration = Math.floor(Math.random() * 10000) + 20000; // 20000-30000毫秒
+      // 生成15-20秒的随机完成时间
+      const randomDuration = Math.floor(Math.random() * 5000) + 15000; // 15000-20000毫秒
       const step1 = Math.floor(randomDuration * 0.2);
       const step2 = Math.floor(randomDuration * 0.4);
       const step3 = Math.floor(randomDuration * 0.6);
@@ -538,8 +538,8 @@ export default function Chat() {
         
         if (targetAgent) {
           const getProgressSteps = (agentId: string) => {
-            // 生成20-30秒的随机完成时间
-            const randomDuration = Math.floor(Math.random() * 10000) + 20000; // 20000-30000毫秒
+            // 生成15-20秒的随机完成时间
+            const randomDuration = Math.floor(Math.random() * 5000) + 15000; // 15000-20000毫秒
             const step1 = Math.floor(randomDuration * 0.25);
             const step2 = Math.floor(randomDuration * 0.5);
             const step3 = Math.floor(randomDuration * 0.75);

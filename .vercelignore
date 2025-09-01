@@ -1,0 +1,23 @@
+# Ignore all files in api folder except index.ts
+api/*
+!api/index.ts
+
+# Ignore other TypeScript files that might be treated as functions
+api/routes/*
+api/lib/*
+api/agents/*
+api/app.ts
+api/server.ts
+api/websocket.ts
+
+# Ignore development files
+.env.local
+.env.development
+nodemon.json
+test-gemini.js
+web.py
+
+# Ignore uploads folder
+uploads/
+
+# Ignore example folder

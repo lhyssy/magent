@@ -8,9 +8,9 @@ interface LayoutProps {
 
 export default function Layout({ children, showNavbar = true }: LayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-900">
       {showNavbar && <Navbar />}
-      <main className={showNavbar ? 'pt-0' : ''}>
+      <main className={showNavbar ? 'pt-16' : ''}>
         {children}
       </main>
     </div>

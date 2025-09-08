@@ -1,34 +1,24 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Upload, Activity, FileText, Users, LogOut, Play } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Home, Activity } from 'lucide-react';
 
 const navigation = [
   { name: '首页', href: '/', icon: Home },
-  { name: '数据上传', href: '/upload', icon: Upload },
-  { name: '患者管理', href: '/patients', icon: Users },
-  { name: '系统演示', href: '/demo', icon: Activity },
 ];
 
 export default function Navbar() {
   const location = useLocation();
-  const navigate = useNavigate();
-  
-  const handleStartDemo = () => {
-    navigate('/demo');
-    // 延迟一下确保页面加载完成后再启动演示
-    setTimeout(() => {
-      const event = new CustomEvent('startDemo');
-      window.dispatchEvent(event);
-    }, 100);
-  };
 
   return (
-    <nav className="bg-blue-600 shadow-lg">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-white/20 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <Activity className="h-8 w-8 text-white" />
-              <span className="text-xl font-bold text-white">连心智诊师</span>
+            <Link to="/" className="flex items-center space-x-3 group">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg blur-sm opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <Activity className="relative h-8 w-8 text-white bg-gradient-to-r from-blue-500 to-purple-600 p-1.5 rounded-lg" />
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">连心智诊师</span>
             </Link>
           </div>
           
@@ -40,10 +30,10 @@ export default function Navbar() {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
                     isActive
-                      ? 'bg-blue-700 text-white'
-                      : 'text-blue-100 hover:bg-blue-500 hover:text-white'
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25'
+                      : 'text-gray-700 hover:bg-white/60 hover:text-gray-900 hover:shadow-md'
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -51,19 +41,6 @@ export default function Navbar() {
                 </Link>
               );
             })}
-            
-            <button 
-              onClick={handleStartDemo}
-              className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium bg-green-600 text-white hover:bg-green-700 transition-colors"
-            >
-              <Play className="h-4 w-4" />
-              <span>启动演示</span>
-            </button>
-            
-            <button className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-blue-100 hover:bg-blue-500 hover:text-white transition-colors">
-              <LogOut className="h-4 w-4" />
-              <span>退出</span>
-            </button>
           </div>
         </div>
       </div>

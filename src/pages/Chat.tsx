@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import Layout from '../components/Layout'
 import Button from '../components/Button'
@@ -140,9 +140,55 @@ const presetReplies = [
     *   本报告可作为您与医生沟通的有力参考，帮助医生快速、全面地了解您的完整病史。`
 ]
 
+// 案例配置
+const caseConfigs = {
+  depression: {
+    title: '抑郁症诊断分析案例',
+    description: '演示多智能体协作诊断抑郁症的完整流程',
+    presetMessage: '医生您好，我最近几个月感觉情绪很低落，对以前喜欢的事情都失去了兴趣，经常感到疲惫，晚上也睡不好觉，注意力很难集中。这种情况已经持续了大概3个月了，严重影响了我的工作和生活。请帮我分析一下这是什么情况。',
+    questionFlow: [
+      '感谢您详细描述了您的情况。作为您的专业心理健康分析师，我需要进一步了解一些具体细节来为您提供更准确的评估。\n\n首先，关于您提到的情绪低落：这种感觉是持续性的吗？在一天中的什么时候最严重？是否有任何事情能够暂时改善您的心情？',
+      '我理解您的困扰。接下来想了解您的睡眠模式：您通常几点入睡？是否难以入睡，还是容易早醒？睡眠质量如何？是否感到疲惫但无法入睡？',
+      '关于您的日常活动和兴趣：除了失去兴趣外，您是否发现自己的思维速度变慢了？做决定是否变得困难？是否有自责或无价值感？',
+      '让我了解一下对您生活的影响：您的工作效率如何？人际关系是否受到影响？是否有过不想活下去的想法？',
+      '最后，我想了解您的支持系统和既往史：您是否告诉过家人或朋友您的感受？之前是否有过类似经历？是否有家族精神疾病史？'
+    ]
+  },
+  anxiety: {
+    title: '焦虑症评估案例',
+    description: '展示智能体团队如何评估和诊断焦虑障碍',
+    presetMessage: '医生，我最近总是感到很紧张和担心，心跳很快，手心出汗，经常有一种说不出的恐惧感。特别是在人多的地方或者要做重要事情的时候，这种感觉会更强烈。有时候甚至会突然感到呼吸困难，好像要窒息一样。这种情况已经影响到我的日常生活了。',
+    questionFlow: [
+      '我理解您正在经历的困扰，这些症状确实会让人感到不适。让我来帮助您进行专业的评估。\n\n首先，关于您的恐惧感：您能描述一下这种恐惧的具体内容吗？是担心特定的事情发生，还是一种无明确对象的恐惧感？',
+      '您提到在人多的地方症状会加重，请告诉我：还有哪些特定的场合或情况会触发您的紧张感？比如考试、演讲、社交聚会等？',
+      '关于您的身体症状：除了心跳快、出汗、呼吸困难外，您是否还有头晕、恶心、肌肉紧张、颤抖等症状？这些症状通常持续多长时间？',
+      '让我了解这些症状的频率和强度：您大概多久会经历一次这样的症状？最严重的时候是什么样的？是否影响了您的工作或学习？',
+      '最后，关于应对和求助：您是否尝试过任何方法来缓解这些症状？效果如何？您的家人朋友是否了解您的情况？是否考虑过寻求专业帮助？'
+    ]
+  },
+  comprehensive: {
+    title: '综合心理健康评估案例',
+    description: '全面的心理健康状态评估和分析',
+    presetMessage: '医生，我想做一个全面的心理健康评估。最近我的情绪波动比较大，有时候很兴奋有干劲，有时候又很沮丧。睡眠也不太规律，有时候几乎不需要睡觉就很有精神，有时候又嗜睡。我担心自己的心理状态，希望能得到专业的分析和建议。',
+    questionFlow: [
+      '很高兴您主动寻求心理健康评估，这体现了您对自身健康的重视。让我为您进行全面的评估。\n\n首先，关于您的情绪波动：您能详细描述一下兴奋和沮丧的状态分别是什么样的？这种波动有规律吗？大概多长时间会有一次变化？',
+      '关于您的睡眠模式：在精力充沛的时候，您大概睡几个小时？感觉累吗？在情绪低落时，睡眠时间和质量如何？',
+      '让我了解您在不同状态下的行为表现：情绪高涨时，您的活动量、说话速度、决策能力如何？是否会做一些平时不会做的事情？',
+      '关于您的日常功能：这些情绪和睡眠的变化是否影响了您的工作、学习或人际关系？周围的人是否注意到您的变化？',
+      '最后，让我了解您的整体状况：您是否有过极度兴奋持续数天的经历？是否有过严重的抑郁期？家族中是否有类似的情况？您对目前的状态有什么担忧？'
+    ]
+  }
+}
+
 export default function Chat() {
   const [message, setMessage] = useState('')
   const [isRecording, setIsRecording] = useState(false)
+  const location = useLocation()
+  const [searchParams] = useSearchParams()
+  const [currentCase, setCurrentCase] = useState<string | null>(null)
+  const [showCaseBanner, setShowCaseBanner] = useState(false)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [isAIGuiding, setIsAIGuiding] = useState(false)
 
   const [isAgentPanelCollapsed, setIsAgentPanelCollapsed] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
@@ -237,6 +283,106 @@ export default function Chat() {
       timestamp: new Date(),
     },
   ])
+  
+  // 处理从首页传递的初始消息和URL参数案例
+  useEffect(() => {
+    const state = location.state as { initialMessage?: string; caseType?: string } | null;
+    const caseParam = searchParams.get('case');
+    
+    console.log('Chat页面接收到的state:', state);
+    console.log('URL参数case:', caseParam);
+    
+    // 处理从首页传递的state数据（优先级更高）
+    if (state?.caseType && caseConfigs[state.caseType as keyof typeof caseConfigs]) {
+      const caseConfig = caseConfigs[state.caseType as keyof typeof caseConfigs];
+      console.log('设置案例类型:', state.caseType);
+      setCurrentCase(state.caseType);
+      setShowCaseBanner(true);
+      
+      // 启动AI引导流程
+      setTimeout(() => {
+        // 首先发送用户的初始描述
+        const userMessage: Message = {
+          id: Date.now().toString(),
+          type: 'user',
+          content: state.initialMessage || caseConfig.presetMessage,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, userMessage]);
+        
+        // 然后AI开始引导对话
+        setTimeout(() => {
+          setIsAIGuiding(true);
+          setCurrentQuestionIndex(0);
+          
+          const aiQuestion: Message = {
+            id: (Date.now() + 1).toString(),
+            type: 'assistant',
+            content: caseConfig.questionFlow[0],
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, aiQuestion]);
+        }, 1500);
+        
+        // 激活相应的智能体
+        if (typeof activateAgentsByContent === 'function') {
+          activateAgentsByContent(state.initialMessage || caseConfig.presetMessage, []);
+        }
+        
+        // 开始诊断流程
+        setShouldStartDiagnosis(true);
+      }, 1000);
+      
+      // 清除location state以避免重复处理
+      window.history.replaceState({}, document.title);
+    }
+    // 处理URL参数案例
+    else if (caseParam && caseConfigs[caseParam as keyof typeof caseConfigs]) {
+      const caseConfig = caseConfigs[caseParam as keyof typeof caseConfigs];
+      setCurrentCase(caseParam);
+      setShowCaseBanner(true);
+      
+      // 启动AI引导流程
+      setTimeout(() => {
+        // 首先发送用户的初始描述
+        const userMessage: Message = {
+          id: Date.now().toString(),
+          type: 'user',
+          content: caseConfig.presetMessage,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, userMessage]);
+        
+        // 然后AI开始引导对话
+        setTimeout(() => {
+          setIsAIGuiding(true);
+          setCurrentQuestionIndex(0);
+          
+          const aiQuestion: Message = {
+            id: (Date.now() + 1).toString(),
+            type: 'assistant',
+            content: caseConfig.questionFlow[0],
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, aiQuestion]);
+        }, 1500);
+        
+        // 激活相应的智能体
+        if (typeof activateAgentsByContent === 'function') {
+          activateAgentsByContent(caseConfig.presetMessage, []);
+        }
+        
+        // 开始诊断流程
+        setShouldStartDiagnosis(true);
+      }, 1000);
+    }
+    // 处理从首页传递的初始消息（仅消息内容）
+    else if (state?.initialMessage) {
+      setMessage(state.initialMessage);
+      // 清除location state以避免重复处理
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state, searchParams]);
   const [isAiProcessing, setIsAiProcessing] = useState(false)
   const [currentAgentTasks, setCurrentAgentTasks] = useState<AgentTask[]>([])
   const [diagnosisState, setDiagnosisState] = useState<DiagnosisState>({
@@ -624,12 +770,60 @@ export default function Chat() {
     setUploadedFiles(prev => prev.filter(file => file.id !== fileId))
     toast.success('文件已删除')
   }
+
+  // 处理AI引导对话的下一个问题
+  const handleNextAIQuestion = () => {
+    if (!currentCase || !isAIGuiding) return
+    
+    const caseConfig = caseConfigs[currentCase as keyof typeof caseConfigs]
+    if (!caseConfig || !caseConfig.questionFlow) return
+    
+    const nextIndex = currentQuestionIndex + 1
+    
+    if (nextIndex < caseConfig.questionFlow.length) {
+      // 还有更多问题，继续提问
+      setTimeout(() => {
+        const aiQuestion: Message = {
+          id: Date.now().toString(),
+          type: 'assistant',
+          content: caseConfig.questionFlow[nextIndex],
+          timestamp: new Date()
+        }
+        setMessages(prev => [...prev, aiQuestion])
+        setCurrentQuestionIndex(nextIndex)
+      }, 1500)
+    } else {
+      // 所有问题都问完了，生成最终诊断报告
+      setTimeout(() => {
+        const finalReport: Message = {
+          id: Date.now().toString(),
+          type: 'assistant',
+          content: `感谢您耐心回答我的问题。基于您提供的详细信息，我现在为您生成综合评估报告：\n\n## 📋 心理健康评估报告\n\n### 症状分析\n根据您的描述，我观察到以下关键症状模式：\n- 情绪状态的变化特征\n- 睡眠模式的异常表现\n- 日常功能的受影响程度\n- 认知功能的变化情况\n\n### 专业建议\n1. **即时关注**：建议您尽快寻求专业心理健康服务\n2. **生活调整**：保持规律作息，适度运动，维持社交联系\n3. **支持系统**：与信任的家人朋友分享您的感受\n4. **持续监测**：记录情绪和症状变化，便于专业评估\n\n### 后续建议\n建议您预约专业心理健康专家进行面对面评估，以获得更准确的诊断和个性化治疗方案。\n\n如果您有任何紧急情况或自伤想法，请立即联系当地心理危机干预热线或前往最近的医疗机构。\n\n您的健康和安全是最重要的。`,
+          timestamp: new Date()
+        }
+        setMessages(prev => [...prev, finalReport])
+        setIsAIGuiding(false)
+        setCurrentQuestionIndex(0)
+      }, 2000)
+    }
+  }
   
   // 发送消息
   const handleSendMessage = async () => {
     if ((!message.trim() && uploadedFiles.length === 0) || isAiProcessing) return
 
     setIsAiProcessing(true)
+
+    // 创建用户消息
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      type: 'user',
+      content: message.trim(),
+      timestamp: new Date()
+    }
+    
+    // 添加用户消息到聊天记录
+    setMessages(prev => [...prev, userMessage])
 
     // 根据文件类型激活对应的智能体
      if (uploadedFiles.length > 0) {
@@ -642,8 +836,13 @@ export default function Chat() {
      activateAgentsByContent(message.trim(), uploadedFiles)
 
     try {
-      // 使用流式聊天发送消息
-      await sendMessage(message.trim())
+      // 如果是AI引导模式，触发下一个问题
+      if (isAIGuiding && currentCase) {
+        handleNextAIQuestion()
+      } else {
+        // 使用流式聊天发送消息
+        await sendMessage(message.trim())
+      }
       
       setMessage('')
       setUploadedFiles([])
@@ -764,10 +963,25 @@ export default function Chat() {
                     <ChevronRight className={`text-gray-700 ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}`} />
                   </button>
                 {/* 折叠状态下的简化状态指示器 */}
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-col space-y-3">
                   {agentStatuses.map((agent) => (
-                    <div key={agent.id} className="flex justify-center">
-                      <div className={`w-3 h-3 rounded-full ${getStatusColor(agent.status)}`} title={`${agent.name}: ${getStatusText(agent.status)}`} />
+                    <div key={agent.id} className="flex justify-center relative group">
+                      {/* 外圈动画 */}
+                      <div className={`absolute inset-0 w-4 h-4 rounded-full ${getStatusColor(agent.status)} ${
+                        agent.status === 'working' ? 'animate-ping opacity-20' : ''
+                      }`}></div>
+                      {/* 主指示器 */}
+                      <div 
+                        className={`relative w-4 h-4 rounded-full ${getStatusColor(agent.status)} shadow-lg transition-all duration-300 group-hover:scale-125 ${
+                          agent.status === 'working' ? 'animate-pulse ring-2 ring-blue-200' :
+                          agent.status === 'completed' ? 'ring-2 ring-green-200' :
+                          ''
+                        }`} 
+                        title={`${agent.name}: ${getStatusText(agent.status)}`}
+                      >
+                        {/* 内部光晕 */}
+                        <div className="absolute inset-0.5 bg-white/30 rounded-full"></div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -796,19 +1010,34 @@ export default function Chat() {
                     <div key={agent.id} className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 hover:shadow-xl transition-all duration-300 hover:scale-[1.02] p-4">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center space-x-3">
-                          <div className="p-2.5 rounded-2xl shadow-lg ring-2 ring-white/50">
-                            {agent.icon}
+                          <div className="relative group">
+                            {/* 发光背景 */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-blue-400/50 to-purple-500/50 rounded-2xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
+                            {/* 主图标容器 */}
+                            <div className="relative p-2.5 bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl ring-2 ring-white/50 border border-white/30 group-hover:scale-105 transition-all duration-300">
+                              {/* 内部光晕 */}
+                              <div className="absolute inset-1 bg-gradient-to-br from-white/30 to-transparent rounded-xl"></div>
+                              <div className="relative z-10">
+                                {agent.icon}
+                              </div>
+                            </div>
                           </div>
                           <span className="font-bold text-gray-900 text-sm">{agent.name}</span>
                         </div>
-                        <div className={`relative w-3 h-3 rounded-full ${
-                          getStatusColor(agent.status)
-                        } shadow-lg`}>
-                          {agent.status === 'working' && (
-                            <div className={`absolute inset-0 rounded-full ${
-                              getStatusColor(agent.status)
-                            } animate-ping opacity-75`} />
-                          )}
+                        <div className="relative">
+                          {/* 状态指示器外圈动画 */}
+                          <div className={`absolute inset-0 w-3 h-3 rounded-full ${getStatusColor(agent.status)} ${
+                            agent.status === 'working' ? 'animate-ping opacity-30' : ''
+                          }`}></div>
+                          {/* 主状态指示器 */}
+                          <div className={`relative w-3 h-3 rounded-full ${getStatusColor(agent.status)} shadow-lg ${
+                            agent.status === 'working' ? 'animate-pulse' : ''
+                          } ${
+                            agent.status === 'completed' ? 'ring-2 ring-green-200' : ''
+                          }`}>
+                            {/* 内部光晕 */}
+                            <div className="absolute inset-0.5 bg-white/40 rounded-full"></div>
+                          </div>
                         </div>
                       </div>
                       <div className="text-xs font-bold text-gray-700 mb-2 flex items-center">
@@ -820,12 +1049,22 @@ export default function Chat() {
                         {agent.currentTask}
                       </div>
                       <div className="relative">
-                        <div className="w-full bg-gradient-to-r from-gray-200 to-gray-300 rounded-full h-2 shadow-inner">
-                          <div 
-                            className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-500 shadow-sm relative overflow-hidden" 
+                        <div className="w-full bg-gray-200/60 backdrop-blur-sm rounded-full h-2 overflow-hidden shadow-inner">
+                          <div
+                            className={`h-full transition-all duration-500 ease-out relative ${
+                              agent.status === 'working' ? 'bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600' :
+                              agent.status === 'completed' ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600' :
+                              agent.status === 'error' ? 'bg-gradient-to-r from-red-500 via-red-600 to-red-700' :
+                              'bg-gray-300'
+                            } ${
+                              agent.status === 'working' ? 'shadow-lg' : ''
+                            }`}
                             style={{ width: `${agent.progress}%` }}
                           >
-                            <div className="absolute inset-0 bg-white/30 animate-pulse" />
+                            {/* 进度条光效 */}
+                            {agent.status === 'working' && (
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+                            )}
                           </div>
                         </div>
                         <div className="text-xs text-gray-500 mt-1 text-right font-medium">
@@ -884,6 +1123,27 @@ export default function Chat() {
             </div>
           </div>
 
+          {/* 案例标识横幅 */}
+          {currentCase && caseConfigs[currentCase as keyof typeof caseConfigs] && (
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-200/50 p-4">
+              <div className="flex items-center justify-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-amber-500 to-orange-500 rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-center">
+                  <h3 className="text-lg font-bold text-amber-800">
+                    {caseConfigs[currentCase as keyof typeof caseConfigs].title}
+                  </h3>
+                  <p className="text-sm text-amber-600">
+                    {caseConfigs[currentCase as keyof typeof caseConfigs].description}
+                  </p>
+                </div>
+                <div className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">
+                  演示案例
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* 文件上传区域 */}
           {uploadedFiles.length > 0 && (
@@ -919,6 +1179,29 @@ export default function Chat() {
 
           {/* 聊天消息区域 */}
           <div className="flex-1 overflow-y-auto p-4 lg:p-8 md:p-6 sm:p-4 xs:p-3 space-y-6 lg:space-y-8 md:space-y-6 sm:space-y-4 xs:space-y-3 max-h-full">
+            {/* 案例横幅 */}
+            {showCaseBanner && currentCase && caseConfigs[currentCase] && (
+              <div className="bg-gradient-to-r from-blue-50/80 via-indigo-50/80 to-purple-50/80 backdrop-blur-sm border border-blue-200/50 rounded-2xl p-6 mb-6 shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <Brain className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-800">{caseConfigs[currentCase].title}</h3>
+                      <p className="text-sm text-gray-600">{caseConfigs[currentCase].description}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowCaseBanner(false)}
+                    className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-white/50 rounded-lg"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            )}
+            
             {/* 诊断进度条 */}
             <DiagnosisProgress
               isActive={diagnosisState.isActive}
@@ -966,12 +1249,19 @@ export default function Chat() {
               >
                 <div className="flex items-start space-x-3 lg:space-x-4 max-w-[85%] lg:max-w-[75%]">
                   {message.type !== 'user' && !(message.id === currentStreamingId && isStreaming) && (
-                    <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl flex-shrink-0 ring-2 ring-white/20">
-                      {message.type === 'system' ? (
-                        <Sparkles className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
-                      ) : (
-                        <Bot className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
-                      )}
+                    <div className="relative w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0 group">
+                      {/* 发光背景层 */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 rounded-2xl blur-md opacity-60 group-hover:opacity-80 transition-all duration-300 animate-pulse"></div>
+                      {/* 主头像容器 */}
+                      <div className="relative w-full h-full bg-gradient-to-br from-blue-500/90 via-indigo-600/90 to-purple-600/90 backdrop-blur-xl rounded-2xl flex items-center justify-center shadow-2xl ring-2 ring-white/30 border border-white/20 group-hover:scale-110 transition-all duration-300">
+                        {/* 内部光晕 */}
+                        <div className="absolute inset-1 bg-gradient-to-br from-white/20 to-transparent rounded-xl"></div>
+                        {message.type === 'system' ? (
+                          <Sparkles className="w-5 h-5 lg:w-6 lg:h-6 text-white relative z-10 drop-shadow-lg" />
+                        ) : (
+                          <Bot className="w-5 h-5 lg:w-6 lg:h-6 text-white relative z-10 drop-shadow-lg" />
+                        )}
+                      </div>
                     </div>
                   )}
                   <div
@@ -1012,8 +1302,15 @@ export default function Chat() {
                     )}
                   </div>
                   {message.type === 'user' && (
-                    <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-gray-500 via-gray-600 to-slate-600 rounded-2xl flex items-center justify-center shadow-xl flex-shrink-0 ring-2 ring-white/20">
-                      <User className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
+                    <div className="relative w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0 group">
+                      {/* 发光背景层 */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 rounded-2xl blur-md opacity-50 group-hover:opacity-70 transition-all duration-300"></div>
+                      {/* 主头像容器 */}
+                      <div className="relative w-full h-full bg-gradient-to-br from-emerald-500/90 via-teal-600/90 to-cyan-600/90 backdrop-blur-xl rounded-2xl flex items-center justify-center shadow-2xl ring-2 ring-white/30 border border-white/20 group-hover:scale-110 transition-all duration-300">
+                        {/* 内部光晕 */}
+                        <div className="absolute inset-1 bg-gradient-to-br from-white/20 to-transparent rounded-xl"></div>
+                        <User className="w-5 h-5 lg:w-6 lg:h-6 text-white relative z-10 drop-shadow-lg" />
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1038,22 +1335,35 @@ export default function Chat() {
                   variant="outline"
                   size="sm"
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center space-x-2 lg:space-x-3 md:space-x-2 sm:space-x-1 xs:space-x-1 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-2 border-blue-200/60 text-blue-700 hover:from-blue-100 hover:to-purple-100 hover:border-blue-300 transition-all duration-300 shadow-lg hover:shadow-xl rounded-2xl px-4 py-3 md:px-3 md:py-2 sm:px-2 sm:py-2 xs:px-2 xs:py-1"
+                  className="group relative flex items-center space-x-2 lg:space-x-3 md:space-x-2 sm:space-x-1 xs:space-x-1 bg-gradient-to-br from-blue-50/80 via-indigo-50/80 to-purple-50/80 backdrop-blur-md border-2 border-blue-200/60 text-blue-700 hover:from-blue-100/90 hover:to-purple-100/90 hover:border-blue-300 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 rounded-2xl px-4 py-3 md:px-3 md:py-2 sm:px-2 sm:py-2 xs:px-2 xs:py-1 overflow-hidden"
                 >
-                  <Upload className="w-5 h-5 md:w-4 md:h-4 sm:w-4 sm:h-4 xs:w-3 xs:h-3" />
-                  <span className="font-semibold hidden sm:inline md:text-sm sm:text-xs xs:text-xs">上传数据</span>
+                  {/* 按钮光效 */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
+                  <Upload className="w-5 h-5 md:w-4 md:h-4 sm:w-4 sm:h-4 xs:w-3 xs:h-3 relative z-10 group-hover:rotate-12 transition-transform duration-300" />
+                  <span className="font-semibold hidden sm:inline md:text-sm sm:text-xs xs:text-xs relative z-10">上传数据</span>
                 </Button>
                 <Button
                   variant={isRecording ? "danger" : "outline"}
                   size="sm"
                   onClick={toggleRecording}
-                  className={`transition-all duration-300 shadow-lg hover:shadow-xl rounded-2xl px-4 py-3 md:px-3 md:py-2 sm:px-2 sm:py-2 xs:px-2 xs:py-1 ${
+                  className={`group relative transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 rounded-2xl px-4 py-3 md:px-3 md:py-2 sm:px-2 sm:py-2 xs:px-2 xs:py-1 overflow-hidden ${
                     isRecording 
-                      ? 'bg-gradient-to-br from-red-500 via-red-600 to-red-700 text-white animate-pulse border-2 border-red-300' 
-                      : 'bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-200/60 text-green-700 hover:from-green-100 hover:to-teal-100 hover:border-green-300'
+                      ? 'bg-gradient-to-br from-red-500 via-red-600 to-red-700 text-white animate-pulse border-2 border-red-300 ring-4 ring-red-200/50' 
+                      : 'bg-gradient-to-br from-green-50/80 via-emerald-50/80 to-teal-50/80 backdrop-blur-md border-2 border-green-200/60 text-green-700 hover:from-green-100/90 hover:to-teal-100/90 hover:border-green-300'
                   }`}
                 >
-                  {isRecording ? <MicOff className="w-5 h-5 md:w-4 md:h-4 sm:w-4 sm:h-4 xs:w-3 xs:h-3" /> : <Mic className="w-5 h-5 md:w-4 md:h-4 sm:w-4 sm:h-4 xs:w-3 xs:h-3" />}
+                  {/* 录音状态光效 */}
+                  {isRecording && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+                  )}
+                  {!isRecording && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
+                  )}
+                  {isRecording ? (
+                    <MicOff className="w-5 h-5 md:w-4 md:h-4 sm:w-4 sm:h-4 xs:w-3 xs:h-3 relative z-10 animate-bounce" />
+                  ) : (
+                    <Mic className="w-5 h-5 md:w-4 md:h-4 sm:w-4 sm:h-4 xs:w-3 xs:h-3 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                  )}
                 </Button>
               </div>
               <div className="flex-1 relative">
@@ -1063,7 +1373,7 @@ export default function Chat() {
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
                   placeholder={uploadedFiles.length > 0 ? `已选择 ${uploadedFiles.length} 个文件，可继续编辑消息内容...` : "详细描述您的症状或上传相关数据文件..."}
-                  className="w-full px-5 lg:px-7 md:px-5 sm:px-4 xs:px-3 py-3 lg:py-4 md:py-3 sm:py-2 xs:py-2 bg-white/90 backdrop-blur-sm border-2 border-white/60 rounded-3xl focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 shadow-lg text-gray-900 placeholder-gray-500 transition-all duration-300 text-sm lg:text-base md:text-sm sm:text-xs xs:text-xs font-medium hover:shadow-xl"
+                  className="w-full px-5 lg:px-7 md:px-5 sm:px-4 xs:px-3 py-3 lg:py-4 md:py-3 sm:py-2 xs:py-2 bg-white/90 backdrop-blur-sm border-2 border-white/60 rounded-3xl focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 focus:bg-white/95 shadow-lg text-gray-900 placeholder-gray-500 transition-all duration-300 text-sm lg:text-base md:text-sm sm:text-xs xs:text-xs font-medium hover:shadow-xl hover:border-blue-300/80 hover:bg-white/95"
                 />
                 {message.trim() && (
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
@@ -1075,21 +1385,25 @@ export default function Chat() {
                 onClick={handleSendMessage}
                 disabled={(!message.trim() && uploadedFiles.length === 0) || isAiProcessing || isStreaming}
                 size="sm"
-                className={`shadow-xl hover:shadow-2xl transition-all duration-300 px-4 lg:px-8 md:px-6 sm:px-4 xs:px-3 py-3 lg:py-4 md:py-3 sm:py-2 xs:py-2 rounded-3xl font-semibold ${
+                className={`group relative shadow-xl hover:shadow-2xl transition-all duration-300 px-4 lg:px-8 md:px-6 sm:px-4 xs:px-3 py-3 lg:py-4 md:py-3 sm:py-2 xs:py-2 rounded-3xl font-semibold overflow-hidden ${
                   (isAiProcessing || isStreaming)
                     ? 'bg-gradient-to-br from-gray-400 to-gray-500 text-gray-200 cursor-not-allowed' 
-                    : 'bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 hover:from-blue-600 hover:via-indigo-700 hover:to-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105'
+                    : 'bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 hover:from-blue-600 hover:via-indigo-700 hover:to-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95'
                 }`}
               >
+                {/* 发送按钮光效 */}
+                {!(isAiProcessing || isStreaming) && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
+                )}
                 {(isAiProcessing || isStreaming) ? (
                   <>
-                    <div className="w-5 h-5 md:w-4 md:h-4 sm:w-4 sm:h-4 xs:w-3 xs:h-3 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    <span className="hidden sm:inline md:text-sm sm:text-xs xs:text-xs">{isStreaming ? '回复中...' : '分析中...'}</span>
+                    <div className="w-5 h-5 md:w-4 md:h-4 sm:w-4 sm:h-4 xs:w-3 xs:h-3 border-2 border-white border-t-transparent rounded-full animate-spin mr-2 relative z-10" />
+                    <span className="hidden sm:inline md:text-sm sm:text-xs xs:text-xs relative z-10">{isStreaming ? '回复中...' : '分析中...'}</span>
                   </>
                 ) : (
                   <>
-                    <Send className="w-5 h-5 md:w-4 md:h-4 sm:w-4 sm:h-4 xs:w-3 xs:h-3 mr-2" />
-                    <span className="hidden sm:inline md:text-sm sm:text-xs xs:text-xs">发送</span>
+                    <Send className="w-5 h-5 md:w-4 md:h-4 sm:w-4 sm:h-4 xs:w-3 xs:h-3 mr-2 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
+                    <span className="hidden sm:inline md:text-sm sm:text-xs xs:text-xs relative z-10">发送</span>
                   </>
                 )}
               </Button>

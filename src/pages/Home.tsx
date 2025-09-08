@@ -1,342 +1,195 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Upload, Users, Play, BarChart3, Activity, Clock, AlertTriangle, TrendingUp, FileText, Brain } from 'lucide-react';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Brain, Zap, Heart, ArrowRight, Play } from 'lucide-react';
 import Layout from '@/components/Layout';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
-import { usePatientsStore, useDiagnosisStore, useAppStore } from '../store';
-import { patientsApi, diagnosisApi, uploadApi } from '../utils/api';
 
 const Home: React.FC = () => {
-  const { addNotification } = useAppStore();
-  const [stats, setStats] = useState({
-    patients: { total: 0, active: 0, newThisMonth: 0 },
-    diagnosis: { totalSessions: 0, completedSessions: 0, successRate: 0 },
-    upload: { totalUploads: 0, totalSize: 0 }
-  });
-  const [recentActivities, setRecentActivities] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  // 加载统计数据
-  useEffect(() => {
-    const loadStats = async () => {
-      try {
-        setLoading(true);
-        
-        // 并行加载各种统计数据
-        const [patientsStats, diagnosisStats, uploadStats] = await Promise.all([
-          patientsApi.getStats(),
-          diagnosisApi.getStats(),
-          uploadApi.getStats()
-        ]);
-        
-        if (patientsStats.success && diagnosisStats.success && uploadStats.success) {
-          setStats({
-            patients: patientsStats.data,
-            diagnosis: diagnosisStats.data,
-            upload: uploadStats.data
-          });
-        }
-        
-        // 加载最近活动（模拟数据）
-        setRecentActivities([
-          {
-            id: '1',
-            type: 'diagnosis',
-            message: '患者张三的诊断分析已完成',
-            timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-            status: 'completed'
-          },
-          {
-            id: '2',
-            type: 'upload',
-            message: '患者李四上传了新的EEG数据',
-            timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-            status: 'success'
-          },
-          {
-            id: '3',
-            type: 'patient',
-            message: '新患者王五已注册',
-            timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-            status: 'info'
-          }
-        ]);
-        
-      } catch (error) {
-        console.error('加载统计数据失败:', error);
-        addNotification({
-          type: 'error',
-          title: '数据加载失败',
-          message: '无法加载系统统计数据，请稍后重试'
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadStats();
-  }, [addNotification]);
+  // 案例数据
+  const demosCases = [
+    {
+      id: 'depression',
+      title: '抑郁症诊断分析',
+      description: '通过文本情感分析和音频语调检测，结合多模态数据进行抑郁症风险评估',
+      icon: Brain,
+      color: 'from-blue-500 to-blue-600',
+      bgColor: 'bg-blue-50',
+      iconColor: 'text-blue-600',
+      features: ['文本情感分析', '音频语调检测', 'fNIRS脑功能成像'],
+      chatPrompt: '我最近情绪低落，经常感到疲惫和无助，想进行抑郁症相关的心理评估。'
+    },
+    {
+      id: 'anxiety',
+      title: '焦虑症评估',
+      description: '基于视频面部表情识别和EEG脑电信号分析，精准评估焦虑症状严重程度',
+      icon: Zap,
+      color: 'from-purple-500 to-purple-600',
+      bgColor: 'bg-purple-50',
+      iconColor: 'text-purple-600',
+      features: ['视频表情识别', 'EEG脑电分析', '生理指标监测'],
+      chatPrompt: '我经常感到紧张和不安，心跳加速，想了解是否有焦虑症的可能。'
+    },
+    {
+      id: 'comprehensive',
+      title: '综合心理健康评估',
+      description: '整合所有模态数据，提供全面的心理健康状况评估和个性化建议',
+      icon: Heart,
+      color: 'from-green-500 to-green-600',
+      bgColor: 'bg-green-50',
+      iconColor: 'text-green-600',
+      features: ['多模态数据融合', '智能体协作分析', '个性化建议'],
+      chatPrompt: '我希望进行一次全面的心理健康评估，了解我的整体心理状态。'
+    }
+  ];
 
-  // 格式化文件大小
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  // 处理案例点击 - 跳转到预设演示
+  const handleCaseClick = (caseData: typeof demosCases[0]) => {
+    // 跳转到预设演示页面
+    navigate('/preset-demo', { 
+      state: { 
+        caseType: caseData.id 
+      } 
+    });
   };
 
-  // 格式化时间
-  const formatTime = (timestamp: string) => {
-    const now = new Date();
-    const time = new Date(timestamp);
-    const diff = now.getTime() - time.getTime();
-    const minutes = Math.floor(diff / (1000 * 60));
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    
-    if (minutes < 60) {
-      return `${minutes}分钟前`;
-    } else if (hours < 24) {
-      return `${hours}小时前`;
-    } else {
-      return time.toLocaleDateString();
-    }
+  // 处理实际聊天
+  const handleStartChat = (caseData: typeof demosCases[0]) => {
+    // 跳转到聊天页面并预设对话内容
+    navigate('/chat', { 
+      state: { 
+        initialMessage: caseData.chatPrompt,
+        caseType: caseData.id 
+      } 
+    });
   };
 
   return (
     <Layout>
-      <div className="space-y-8">
-        {/* 欢迎区域 */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg p-8">
-          <h1 className="text-3xl font-bold mb-4">欢迎使用连心智诊师</h1>
-          <p className="text-blue-100 text-lg mb-6">
-            多智能体心理疾病诊断系统，融合fNIRS、EEG、音频、视频等多模态数据，
-            通过智能体协作提供精准的心理健康评估。
-          </p>
-          <div className="flex space-x-4">
-            <Link to="/demo">
-              <Button variant="outline" className="text-blue-600 border-blue-600 bg-white/90 hover:bg-blue-600 hover:text-white">了解更多</Button>
-            </Link>
-            <Link to="/upload">
-              <Button className="bg-white text-blue-600 hover:bg-blue-50">开始使用</Button>
-            </Link>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+        {/* 动态背景元素 */}
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
         </div>
-
-        {/* 数据统计 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">总患者数</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {loading ? '...' : stats.patients.total}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  活跃: {loading ? '...' : stats.patients.active}
-                </p>
+        
+        {/* 网格背景 */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+        
+        <div className="relative z-10">
+          {/* 主标题区域 */}
+          <div className="text-center py-20 px-4 pt-24">
+            <div className="max-w-4xl mx-auto">
+              <div className="mb-8">
+                <h1 className="text-6xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent mb-6 leading-tight">
+                  连心智诊师
+                </h1>
+                <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
               </div>
-              <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="h-6 w-6 text-blue-600" />
-              </div>
-            </div>
-          </Card>
-          
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">本月新增</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {loading ? '...' : stats.patients.newThisMonth}
-                </p>
-                <p className="text-xs text-green-600 mt-1 flex items-center">
-                  <TrendingUp className="h-3 w-3 mr-1" />
-                  较上月增长
-                </p>
-              </div>
-              <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <Activity className="h-6 w-6 text-green-600" />
-              </div>
-            </div>
-          </Card>
-          
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">诊断会话</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {loading ? '...' : stats.diagnosis.totalSessions}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  完成: {loading ? '...' : stats.diagnosis.completedSessions}
-                </p>
-              </div>
-              <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Brain className="h-6 w-6 text-purple-600" />
-              </div>
-            </div>
-          </Card>
-          
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">成功率</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {loading ? '...' : `${stats.diagnosis.successRate}%`}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  数据: {loading ? '...' : formatFileSize(stats.upload.totalSize)}
-                </p>
-              </div>
-              <div className="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                <BarChart3 className="h-6 w-6 text-orange-600" />
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* 快速操作卡片 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="hover:shadow-lg transition-shadow">
-              <div className="text-center">
-                <Upload className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">数据上传</h3>
-                <p className="text-gray-600 mb-4">上传fNIRS、EEG、音视频数据</p>
-                <Link to="/upload">
-                  <Button className="w-full">开始上传</Button>
-                </Link>
-              </div>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow">
-              <div className="text-center">
-                <Users className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">患者管理</h3>
-                <p className="text-gray-600 mb-4">管理患者档案和历史记录</p>
-                <Link to="/patients">
-                  <Button className="w-full">患者管理</Button>
-                </Link>
-              </div>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow">
-              <div className="text-center">
-                <Activity className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">系统演示</h3>
-                <p className="text-gray-600 mb-4">查看系统功能演示</p>
-                <Link to="/demo">
-                  <Button className="w-full">查看演示</Button>
-                </Link>
-              </div>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow">
-              <div className="text-center">
-                <BarChart3 className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">数据统计</h3>
-                <p className="text-gray-600 mb-4">查看诊断统计和分析</p>
-                <Button className="w-full" disabled>
-                  即将推出
+              <p className="text-xl text-gray-300 mb-10 leading-relaxed max-w-3xl mx-auto">
+                多智能体心理疾病诊断系统，融合 <span className="text-blue-400 font-semibold">fNIRS</span>、<span className="text-purple-400 font-semibold">EEG</span>、<span className="text-pink-400 font-semibold">音频</span>、<span className="text-green-400 font-semibold">视频</span> 等多模态数据
+                <br />
+                通过智能体协作提供精准的心理健康评估
+              </p>
+              <div className="flex justify-center space-x-6">
+                <Button 
+                  disabled 
+                  className="px-10 py-4 text-lg bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-2xl shadow-2xl cursor-not-allowed opacity-60 backdrop-blur-sm border border-white/10"
+                >
+                  正在实现中
+                </Button>
+                <Button 
+                  disabled 
+                  variant="outline" 
+                  className="px-10 py-4 text-lg border-2 border-white/20 text-gray-300 rounded-2xl cursor-not-allowed opacity-60 backdrop-blur-sm hover:bg-white/5"
+                >
+                  了解更多
                 </Button>
               </div>
-            </Card>
+            </div>
           </div>
 
-        {/* 最近活动 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <Card title="系统状态概览" className="p-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium text-green-800">fNIRS智能体</span>
-                </div>
-                <span className="text-xs text-green-600">正常运行</span>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium text-green-800">EEG智能体</span>
-                </div>
-                <span className="text-xs text-green-600">正常运行</span>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium text-green-800">音频智能体</span>
-                </div>
-                <span className="text-xs text-green-600">正常运行</span>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium text-green-800">视频智能体</span>
-                </div>
-                <span className="text-xs text-green-600">正常运行</span>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
-                  <span className="text-sm font-medium text-blue-800">协调智能体</span>
-                </div>
-                <span className="text-xs text-blue-600">待机中</span>
-              </div>
+          {/* 使用示例案例 */}
+          <div className="max-w-7xl mx-auto px-4 pb-20">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-6">使用示例</h2>
+              <p className="text-lg text-gray-400 max-w-2xl mx-auto">探索我们的智能诊断案例，体验多模态数据分析的强大能力</p>
             </div>
-          </Card>
           
-          <Card title="最近活动" className="p-6">
-            <div className="space-y-4">
-              {loading ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                </div>
-              ) : recentActivities.length > 0 ? (
-                recentActivities.map((activity) => {
-                  const getIcon = (type: string) => {
-                    switch (type) {
-                      case 'diagnosis': return Brain;
-                      case 'upload': return Upload;
-                      case 'patient': return Users;
-                      default: return FileText;
-                    }
-                  };
-                  
-                  const getIconColor = (status: string) => {
-                    switch (status) {
-                      case 'completed': return 'text-green-600 bg-green-100';
-                      case 'success': return 'text-blue-600 bg-blue-100';
-                      case 'error': return 'text-red-600 bg-red-100';
-                      default: return 'text-gray-600 bg-gray-100';
-                    }
-                  };
-                  
-                  const Icon = getIcon(activity.type);
-                  
-                  return (
-                    <div key={activity.id} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
-                      <div className={`h-8 w-8 rounded-full flex items-center justify-center ${getIconColor(activity.status)}`}>
-                        <Icon className="h-4 w-4" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {demosCases.map((caseItem) => {
+              const IconComponent = caseItem.icon;
+              return (
+                <Card 
+                  key={caseItem.id} 
+                  className="group hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 transform hover:-translate-y-3 cursor-pointer border-0 shadow-xl hover:scale-105"
+                  onClick={() => handleCaseClick(caseItem)}
+                >
+                  <div className="p-8">
+                    {/* 图标和渐变背景 */}
+                    <div className="relative mb-8">
+                      <div className={`w-20 h-20 rounded-3xl bg-gradient-to-r ${caseItem.color} flex items-center justify-center group-hover:scale-110 transition-all duration-500 shadow-lg`}>
+                        <IconComponent className="h-10 w-10 text-white" />
                       </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">{activity.message}</p>
-                        <p className="text-xs text-gray-400 mt-1">{formatTime(activity.timestamp)}</p>
+                      <div className={`absolute inset-0 w-20 h-20 rounded-3xl bg-gradient-to-r ${caseItem.color} opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-500`}></div>
+                    </div>
+                    
+                    {/* 标题和描述 */}
+                    <h3 className="text-xl font-bold bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent mb-4 group-hover:from-blue-200 group-hover:to-purple-200 transition-all duration-300">
+                      {caseItem.title}
+                    </h3>
+                    <p className="text-gray-400 mb-6 leading-relaxed text-sm">
+                      {caseItem.description}
+                    </p>
+                    
+                    {/* 特性标签 */}
+                    <div className="space-y-2 mb-8">
+                      {caseItem.features.map((feature, index) => (
+                        <div key={index} className="inline-block px-3 py-1.5 bg-white/10 backdrop-blur-sm text-gray-300 text-xs rounded-full mr-2 mb-2 border border-white/10 hover:bg-white/20 transition-colors duration-300">
+                          {feature}
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {/* 操作按钮 */}
+                    <div className="flex items-center justify-between">
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleStartChat(caseItem);
+                        }}
+                        variant="outline"
+                        size="sm"
+                        className="text-xs px-4 py-2 bg-white/10 backdrop-blur-sm border-white/20 text-gray-300 hover:bg-white/20 hover:text-white transition-all duration-300"
+                      >
+                        实际体验
+                      </Button>
+                      <div className="flex items-center space-x-2 text-blue-400 group-hover:text-blue-300 transition-colors duration-300">
+                        <Play className="h-4 w-4" />
+                        <span className="text-sm font-medium">观看演示</span>
+                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                       </div>
                     </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                  <p>暂无最近活动</p>
-                </div>
-              )}
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+
+          {/* 底部说明 */}
+          <div className="bg-black/20 backdrop-blur-xl py-16 mt-16 border-t border-white/10">
+            <div className="max-w-4xl mx-auto text-center px-4">
+              <h3 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-6">智能体协作诊断</h3>
+              <p className="text-gray-400 leading-relaxed text-lg">
+                我们的系统采用多智能体协作架构，每个智能体专门负责不同模态的数据分析，
+                通过协调智能体整合所有分析结果，为您提供全面、准确的心理健康评估报告。
+              </p>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
     </Layout>

@@ -18,8 +18,7 @@ const Home: React.FC = () => {
       color: 'from-blue-500 to-blue-600',
       bgColor: 'bg-blue-50',
       iconColor: 'text-blue-600',
-      features: ['文本情感分析', '音频语调检测', 'fNIRS脑功能成像'],
-      chatPrompt: '我最近情绪低落，经常感到疲惫和无助，想进行抑郁症相关的心理评估。'
+      features: ['文本情感分析', '音频语调检测', 'fNIRS脑功能成像']
     },
     {
       id: 'anxiety',
@@ -29,8 +28,7 @@ const Home: React.FC = () => {
       color: 'from-purple-500 to-purple-600',
       bgColor: 'bg-purple-50',
       iconColor: 'text-purple-600',
-      features: ['视频表情识别', 'EEG脑电分析', '生理指标监测'],
-      chatPrompt: '我经常感到紧张和不安，心跳加速，想了解是否有焦虑症的可能。'
+      features: ['视频表情识别', 'EEG脑电分析', '生理指标监测']
     },
     {
       id: 'comprehensive',
@@ -40,8 +38,7 @@ const Home: React.FC = () => {
       color: 'from-green-500 to-green-600',
       bgColor: 'bg-green-50',
       iconColor: 'text-green-600',
-      features: ['多模态数据融合', '智能体协作分析', '个性化建议'],
-      chatPrompt: '我希望进行一次全面的心理健康评估，了解我的整体心理状态。'
+      features: ['多模态数据融合', '智能体协作分析', '个性化建议']
     }
   ];
 
@@ -55,25 +52,18 @@ const Home: React.FC = () => {
     });
   };
 
-  // 处理实际聊天
-  const handleStartChat = (caseData: typeof demosCases[0]) => {
-    // 跳转到聊天页面并预设对话内容
-    navigate('/chat', { 
-      state: { 
-        initialMessage: caseData.chatPrompt,
-        caseType: caseData.id 
-      } 
-    });
-  };
+
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden animate-fade-in-up">
         {/* 动态背景元素 */}
         <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-glow-pulse"></div>
+          <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-glow-pulse" style={{animationDelay: '1s'}}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl animate-glow-pulse" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-10 right-10 w-32 h-32 bg-cyan-400/10 rounded-full blur-2xl animate-float"></div>
+          <div className="absolute bottom-20 left-20 w-48 h-48 bg-yellow-400/10 rounded-full blur-2xl animate-float" style={{animationDelay: '1.5s'}}></div>
         </div>
         
         {/* 网格背景 */}
@@ -83,11 +73,9 @@ const Home: React.FC = () => {
           {/* 主标题区域 */}
           <div className="text-center py-20 px-4 pt-24">
             <div className="max-w-4xl mx-auto">
-              <div className="mb-8">
-                <h1 className="text-6xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent mb-6 leading-tight">
-                  连心智诊师
-                </h1>
-                <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
+              <div className="mb-8 animate-fade-in-scale">
+                <h1 className="text-6xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent mb-6 leading-tight animate-neon-glow hover:scale-105 transition-transform duration-500">连心智诊师</h1>
+                <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full animate-shimmer"></div>
               </div>
               <p className="text-xl text-gray-300 mb-10 leading-relaxed max-w-3xl mx-auto">
                 多智能体心理疾病诊断系统，融合 <span className="text-blue-400 font-semibold">fNIRS</span>、<span className="text-purple-400 font-semibold">EEG</span>、<span className="text-pink-400 font-semibold">音频</span>、<span className="text-green-400 font-semibold">视频</span> 等多模态数据
@@ -125,16 +113,17 @@ const Home: React.FC = () => {
               return (
                 <Card 
                   key={caseItem.id} 
-                  className="group hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 transform hover:-translate-y-3 cursor-pointer border-0 shadow-xl hover:scale-105"
+                  className="group glass-card card-3d hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 transform hover:-translate-y-3 cursor-pointer border-0 shadow-xl animate-fade-in-up"
                   onClick={() => handleCaseClick(caseItem)}
+                  style={{animationDelay: `${caseItem.id === 'depression' ? '0.2s' : caseItem.id === 'anxiety' ? '0.4s' : '0.6s'}`}}
                 >
                   <div className="p-8">
                     {/* 图标和渐变背景 */}
                     <div className="relative mb-8">
-                      <div className={`w-20 h-20 rounded-3xl bg-gradient-to-r ${caseItem.color} flex items-center justify-center group-hover:scale-110 transition-all duration-500 shadow-lg`}>
+                      <div className={`w-20 h-20 rounded-3xl bg-gradient-to-r ${caseItem.color} flex items-center justify-center group-hover:scale-110 transition-all duration-500 shadow-lg animate-float avatar-glow`}>
                         <IconComponent className="h-10 w-10 text-white" />
                       </div>
-                      <div className={`absolute inset-0 w-20 h-20 rounded-3xl bg-gradient-to-r ${caseItem.color} opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-500`}></div>
+                      <div className={`absolute inset-0 w-20 h-20 rounded-3xl bg-gradient-to-r ${caseItem.color} opacity-0 group-hover:opacity-50 blur-xl transition-opacity duration-500 animate-glow-pulse`}></div>
                     </div>
                     
                     {/* 标题和描述 */}
@@ -155,18 +144,7 @@ const Home: React.FC = () => {
                     </div>
                     
                     {/* 操作按钮 */}
-                    <div className="flex items-center justify-between">
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleStartChat(caseItem);
-                        }}
-                        variant="outline"
-                        size="sm"
-                        className="text-xs px-4 py-2 bg-white/10 backdrop-blur-sm border-white/20 text-gray-300 hover:bg-white/20 hover:text-white transition-all duration-300"
-                      >
-                        实际体验
-                      </Button>
+                    <div className="flex items-center justify-end">
                       <div className="flex items-center space-x-2 text-blue-400 group-hover:text-blue-300 transition-colors duration-300">
                         <Play className="h-4 w-4" />
                         <span className="text-sm font-medium">观看演示</span>

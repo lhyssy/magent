@@ -35,31 +35,52 @@ export default function Demo() {
 
   return (
     <Layout>
-      <div className="p-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">多智能体心理诊断演示系统</h1>
-            <p className="text-gray-600 mb-6">体验先进的多智能体协作心理诊断技术，感受AI驱动的精准医疗</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+        {/* 动态背景元素 */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full blur-3xl animate-float"></div>
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-emerald-400/20 to-cyan-600/20 rounded-full blur-3xl animate-float-delayed"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-indigo-400/10 to-purple-600/10 rounded-full blur-2xl animate-breathing"></div>
+        </div>
+        
+        <div className="relative z-10 p-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="mb-8 animate-fade-in-up">
+              <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 bg-clip-text text-transparent mb-4 animate-fade-in-up">多智能体心理诊断演示系统</h1>
+              <p className="text-gray-600 text-lg lg:text-xl mb-6 leading-relaxed animate-fade-in-up" style={{animationDelay: '0.2s'}}>体验先进的多智能体协作心理诊断技术，感受AI驱动的精准医疗</p>
+            </div>
             
             {/* 快速体验入口 */}
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white mb-8">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold mb-2">开始您的诊断体验</h2>
-                  <p className="text-blue-100 mb-4">与总理智能体对话，上传多模态数据，观察智能体协作诊断过程</p>
-                  <Button 
-                    variant="secondary" 
-                    icon={<Play className="h-4 w-4" />}
-                    onClick={() => navigate('/chat')}
-                    className="bg-white text-blue-600 hover:bg-blue-50"
-                  >
-                    立即开始体验
-                  </Button>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <Card className="glass-card hover:shadow-glow transition-all duration-500 cursor-pointer group animate-fade-in-up" style={{animationDelay: '0.3s'}}>
+                <div className="p-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-glow group-hover:scale-110 transition-transform duration-300">
+                    <Play className="h-8 w-8 text-white" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">开始演示</h3>
+                  <p className="text-gray-600 text-sm">观看完整的诊断流程演示</p>
                 </div>
-                <div className="hidden md:block">
-                  <Brain className="h-24 w-24 text-blue-200" />
+              </Card>
+              
+              <Card className="glass-card hover:shadow-glow transition-all duration-500 cursor-pointer group animate-fade-in-up" style={{animationDelay: '0.4s'}}>
+                <div className="p-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-glow group-hover:scale-110 transition-transform duration-300">
+                    <MessageSquare className="h-8 w-8 text-white" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">智能对话</h3>
+                  <p className="text-gray-600 text-sm">与AI智能体进行交互对话</p>
                 </div>
-              </div>
+              </Card>
+              
+              <Card className="glass-card hover:shadow-glow transition-all duration-500 cursor-pointer group animate-fade-in-up" style={{animationDelay: '0.5s'}}>
+                <div className="p-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-glow group-hover:scale-110 transition-transform duration-300">
+                    <FileText className="h-8 w-8 text-white" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">查看报告</h3>
+                  <p className="text-gray-600 text-sm">浏览详细的诊断分析报告</p>
+                </div>
+              </Card>
             </div>
             
             {/* 演示流程导航 */}
@@ -111,21 +132,23 @@ export default function Demo() {
             </div>
           </div>
 
-          {/* 演示控制 */}
-          <Card title="演示控制" subtitle="控制演示流程的播放和重置" className="mb-6">
+          {/* 演示控制栏 */}
+          <Card title="演示控制" subtitle="控制演示播放和进度" className="glass-card mb-6 animate-fade-in-up" style={{animationDelay: '0.6s'}}>
             <div className="flex items-center space-x-4">
               <Button 
-                variant={isPlaying ? "outline" : "primary"}
+                variant={isPlaying ? "secondary" : "primary"}
                 icon={isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                 onClick={handlePlayPause}
+                className="btn-gradient shadow-glow"
               >
-                {isPlaying ? '暂停演示' : '开始演示'}
+                {isPlaying ? '暂停演示' : '播放演示'}
               </Button>
               
               <Button 
-                variant="outline"
+                variant="outline" 
                 icon={<RotateCcw className="h-4 w-4" />}
                 onClick={handleReset}
+                className="glass-effect shadow-glow"
               >
                 重置演示
               </Button>
@@ -142,34 +165,42 @@ export default function Demo() {
           </Card>
 
           {/* 系统架构概览 */}
-          <Card title="系统架构" subtitle="多智能体协作诊断架构" className="mb-6">
+          <Card title="系统架构" subtitle="多智能体协作诊断架构" className="glass-card mb-6 animate-fade-in-up" style={{animationDelay: '0.7s'}}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h4 className="font-semibold flex items-center">
+                <h4 className="font-semibold flex items-center text-gray-800">
                   <Brain className="h-5 w-5 text-blue-600 mr-2" />
                   专业智能体
                 </h4>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
-                    <Brain className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                  <div className="glass-effect border border-blue-200/50 rounded-lg p-3 text-center hover:shadow-glow transition-all duration-300 group">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform duration-300">
+                      <Brain className="h-6 w-6 text-white" />
+                    </div>
                     <div className="font-medium text-blue-800">fNIRS智能体</div>
                     <div className="text-xs text-blue-600">血氧分析</div>
                   </div>
                   
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
-                    <Eye className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                  <div className="glass-effect border border-green-200/50 rounded-lg p-3 text-center hover:shadow-glow transition-all duration-300 group">
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform duration-300">
+                      <Eye className="h-6 w-6 text-white" />
+                    </div>
                     <div className="font-medium text-green-800">EEG智能体</div>
                     <div className="text-xs text-green-600">脑电分析</div>
                   </div>
                   
-                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 text-center">
-                    <Mic className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                  <div className="glass-effect border border-purple-200/50 rounded-lg p-3 text-center hover:shadow-glow transition-all duration-300 group">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform duration-300">
+                      <Mic className="h-6 w-6 text-white" />
+                    </div>
                     <div className="font-medium text-purple-800">音频智能体</div>
                     <div className="text-xs text-purple-600">语音分析</div>
                   </div>
                   
-                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
-                    <Video className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+                  <div className="glass-effect border border-orange-200/50 rounded-lg p-3 text-center hover:shadow-glow transition-all duration-300 group">
+                    <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform duration-300">
+                      <Video className="h-6 w-6 text-white" />
+                    </div>
                     <div className="font-medium text-orange-800">视频智能体</div>
                     <div className="text-xs text-orange-600">表情分析</div>
                   </div>
@@ -177,27 +208,31 @@ export default function Demo() {
               </div>
               
               <div className="space-y-4">
-                <h4 className="font-semibold flex items-center">
+                <h4 className="font-semibold flex items-center text-gray-800">
                   <Zap className="h-5 w-5 text-yellow-600 mr-2" />
                   协调机制
                 </h4>
                 <div className="space-y-3">
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <MessageSquare className="h-5 w-5 text-yellow-600" />
+                  <div className="glass-effect border border-yellow-200/50 rounded-lg p-4 hover:shadow-glow transition-all duration-300">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-full flex items-center justify-center">
+                        <MessageSquare className="h-5 w-5 text-white" />
+                      </div>
                       <span className="font-medium text-yellow-800">协调智能体</span>
                     </div>
-                    <p className="text-yellow-700 text-sm">
+                    <p className="text-yellow-700 text-sm leading-relaxed">
                       整合各专业智能体的分析结果，协调诊断过程
                     </p>
                   </div>
                   
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <MessageSquare className="h-5 w-5 text-red-600" />
+                  <div className="glass-effect border border-red-200/50 rounded-lg p-4 hover:shadow-glow transition-all duration-300">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-pink-600 rounded-full flex items-center justify-center">
+                        <MessageSquare className="h-5 w-5 text-white" />
+                      </div>
                       <span className="font-medium text-red-800">辩论机制</span>
                     </div>
-                    <p className="text-red-700 text-sm">
+                    <p className="text-red-700 text-sm leading-relaxed">
                       当诊断结果存在分歧时，启动智能体间的辩论协商
                     </p>
                   </div>
@@ -208,7 +243,7 @@ export default function Demo() {
 
           {/* 演示流程 */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <Card title="演示流程" subtitle="当前演示的详细步骤">
+            <Card title="演示流程" subtitle="当前演示的详细步骤" className="glass-card animate-fade-in-up" style={{animationDelay: '0.8s'}}>
               <div className="space-y-3">
                 {demoSteps.map((step, index) => (
                   <div 
@@ -257,7 +292,7 @@ export default function Demo() {
               </div>
             </Card>
 
-            <Card title="实时状态" subtitle="当前智能体的工作状态">
+            <Card title="实时状态" subtitle="当前智能体的工作状态" className="glass-card animate-fade-in-up" style={{animationDelay: '0.9s'}}>
               <div className="space-y-4">
                 <StatusIndicator 
                   status="completed" 
@@ -289,34 +324,34 @@ export default function Demo() {
           </div>
 
           {/* 技术特点 */}
-          <Card title="技术特点" subtitle="系统的核心技术优势">
+          <Card title="技术特点" subtitle="系统的核心技术优势" className="glass-card animate-fade-in-up" style={{animationDelay: '1.0s'}}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Brain className="h-8 w-8 text-blue-600" />
+              <div className="text-center group hover:transform hover:scale-105 transition-all duration-300">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-glow group-hover:shadow-xl transition-all duration-300">
+                  <Brain className="h-8 w-8 text-white" />
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-2">多模态融合</h4>
-                <p className="text-gray-600 text-sm">
+                <h4 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">多模态融合</h4>
+                <p className="text-gray-600 text-sm leading-relaxed">
                   整合fNIRS、EEG、音频、视频等多种生理和行为数据
                 </p>
               </div>
               
-              <div className="text-center">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MessageSquare className="h-8 w-8 text-green-600" />
+              <div className="text-center group hover:transform hover:scale-105 transition-all duration-300">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-glow group-hover:shadow-xl transition-all duration-300">
+                  <MessageSquare className="h-8 w-8 text-white" />
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-2">智能体协作</h4>
-                <p className="text-gray-600 text-sm">
+                <h4 className="font-semibold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">智能体协作</h4>
+                <p className="text-gray-600 text-sm leading-relaxed">
                   多个专业智能体协同工作，通过辩论机制提高诊断准确性
                 </p>
               </div>
               
-              <div className="text-center">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Zap className="h-8 w-8 text-purple-600" />
+              <div className="text-center group hover:transform hover:scale-105 transition-all duration-300">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-glow group-hover:shadow-xl transition-all duration-300">
+                  <Zap className="h-8 w-8 text-white" />
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-2">实时分析</h4>
-                <p className="text-gray-600 text-sm">
+                <h4 className="font-semibold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">实时分析</h4>
+                <p className="text-gray-600 text-sm leading-relaxed">
                   实时处理和分析数据，快速生成诊断结果和治疗建议
                 </p>
               </div>

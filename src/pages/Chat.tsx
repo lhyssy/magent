@@ -8,6 +8,10 @@ import DiagnosisProgress from '../components/DiagnosisProgress'
 import TypewriterMessage from '../components/TypewriterMessage'
 import useStreamingChat from '../hooks/useStreamingChat'
 import geminiService, { type ChiefAgentResponse, type AgentTask } from '../services/geminiService'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import rehypeHighlight from 'rehype-highlight'
+import 'highlight.js/styles/github.css'
 import {
   Bot,
   User,
@@ -45,6 +49,8 @@ interface UploadedFile {
   type: string
   size: number
   url?: string
+  preview?: string
+  description?: string
 }
 
 interface AgentStatus {
@@ -1245,15 +1251,15 @@ export default function Chat() {
             {filteredMessages.map((message) => (
               <div
                 key={message.id}
-                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'} mb-6 lg:mb-8 group animate-in slide-in-from-bottom-2 duration-300`}
+                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'} mb-6 lg:mb-8 group animate-fade-in-up`}
               >
                 <div className="flex items-start space-x-3 lg:space-x-4 max-w-[85%] lg:max-w-[75%]">
                   {message.type !== 'user' && !(message.id === currentStreamingId && isStreaming) && (
-                    <div className="relative w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0 group">
+                    <div className="relative w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0 group avatar-glow">
                       {/* 发光背景层 */}
                       <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 rounded-2xl blur-md opacity-60 group-hover:opacity-80 transition-all duration-300 animate-pulse"></div>
                       {/* 主头像容器 */}
-                      <div className="relative w-full h-full bg-gradient-to-br from-blue-500/90 via-indigo-600/90 to-purple-600/90 backdrop-blur-xl rounded-2xl flex items-center justify-center shadow-2xl ring-2 ring-white/30 border border-white/20 group-hover:scale-110 transition-all duration-300">
+                      <div className="relative w-full h-full bg-gradient-to-br from-blue-500/90 via-indigo-600/90 to-purple-600/90 backdrop-blur-xl rounded-2xl flex items-center justify-center shadow-glow ring-2 ring-white/30 border border-white/20 group-hover:scale-110 transition-all duration-300">
                         {/* 内部光晕 */}
                         <div className="absolute inset-1 bg-gradient-to-br from-white/20 to-transparent rounded-xl"></div>
                         {message.type === 'system' ? (
@@ -1265,12 +1271,12 @@ export default function Chat() {
                     </div>
                   )}
                   <div
-                    className={`px-5 lg:px-8 py-4 lg:py-6 rounded-3xl shadow-xl backdrop-blur-md transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] ${
+                    className={`message-bubble px-5 lg:px-8 py-4 lg:py-6 rounded-3xl shadow-glow backdrop-blur-md transition-all duration-500 hover:shadow-xl hover:scale-[1.02] relative overflow-hidden ${
                       message.type === 'user'
                         ? 'bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 text-white border-2 border-blue-300/30'
                         : message.type === 'system'
                         ? 'bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 text-green-800 border-2 border-green-200/60'
-                        : 'bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30 text-gray-800 border-2 border-gray-200/60'
+                        : 'glass-effect bg-gradient-to-br from-white/95 via-blue-50/80 to-indigo-50/80 text-gray-800 border-2 border-white/40'
                     }`}
                   >
                     {message.id === currentStreamingId && isStreaming ? (
@@ -1280,7 +1286,53 @@ export default function Chat() {
                         className="text-sm lg:text-base leading-relaxed whitespace-pre-wrap font-medium break-words"
                       />
                     ) : (
-                      <p className="text-sm lg:text-base leading-relaxed whitespace-pre-wrap font-medium break-words">{message.content}</p>
+                      <div className="text-sm lg:text-base leading-relaxed font-medium break-words markdown-content">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          rehypePlugins={[rehypeHighlight]}
+                          components={{
+                            h1: ({children}) => <h1 className="text-xl lg:text-2xl font-bold mb-4 text-gray-900">{children}</h1>,
+                            h2: ({children}) => <h2 className="text-lg lg:text-xl font-bold mb-3 text-gray-800">{children}</h2>,
+                            h3: ({children}) => <h3 className="text-base lg:text-lg font-semibold mb-2 text-gray-700">{children}</h3>,
+                            p: ({children}) => <p className="mb-3 leading-relaxed">{children}</p>,
+                            ul: ({children}) => <ul className="list-disc list-inside mb-3 space-y-1">{children}</ul>,
+                            ol: ({children}) => <ol className="list-decimal list-inside mb-3 space-y-1">{children}</ol>,
+                            li: ({children}) => <li className="leading-relaxed">{children}</li>,
+                            strong: ({children}) => <strong className="font-bold text-gray-900">{children}</strong>,
+                            em: ({children}) => <em className="italic text-gray-700">{children}</em>,
+                            code: ({children, className}) => {
+                              const isInline = !className;
+                              return isInline ? (
+                                <code className="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded text-sm font-mono">{children}</code>
+                              ) : (
+                                <code className={className}>{children}</code>
+                              );
+                            },
+                            pre: ({children}) => (
+                              <pre className="bg-gray-50 border border-gray-200 rounded-lg p-4 overflow-x-auto mb-3">
+                                {children}
+                              </pre>
+                            ),
+                            blockquote: ({children}) => (
+                              <blockquote className="border-l-4 border-blue-500 pl-4 py-2 mb-3 bg-blue-50 italic">
+                                {children}
+                              </blockquote>
+                            ),
+                            table: ({children}) => (
+                              <div className="overflow-x-auto mb-3">
+                                <table className="min-w-full border border-gray-200 rounded-lg">{children}</table>
+                              </div>
+                            ),
+                            thead: ({children}) => <thead className="bg-gray-50">{children}</thead>,
+                            tbody: ({children}) => <tbody className="divide-y divide-gray-200">{children}</tbody>,
+                            tr: ({children}) => <tr>{children}</tr>,
+                            th: ({children}) => <th className="px-4 py-2 text-left font-semibold text-gray-900 border-b">{children}</th>,
+                            td: ({children}) => <td className="px-4 py-2 text-gray-700 border-b">{children}</td>,
+                          }}
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
                     )}
                     {message.files && message.files.length > 0 && (
                       <div className="mt-3 lg:mt-4 space-y-2 lg:space-y-3">
@@ -1302,11 +1354,11 @@ export default function Chat() {
                     )}
                   </div>
                   {message.type === 'user' && (
-                    <div className="relative w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0 group">
+                    <div className="relative w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0 group avatar-glow">
                       {/* 发光背景层 */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 rounded-2xl blur-md opacity-50 group-hover:opacity-70 transition-all duration-300"></div>
+                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 rounded-2xl blur-md opacity-50 group-hover:opacity-70 transition-all duration-300 animate-breathing"></div>
                       {/* 主头像容器 */}
-                      <div className="relative w-full h-full bg-gradient-to-br from-emerald-500/90 via-teal-600/90 to-cyan-600/90 backdrop-blur-xl rounded-2xl flex items-center justify-center shadow-2xl ring-2 ring-white/30 border border-white/20 group-hover:scale-110 transition-all duration-300">
+                      <div className="relative w-full h-full bg-gradient-to-br from-emerald-500/90 via-teal-600/90 to-cyan-600/90 backdrop-blur-xl rounded-2xl flex items-center justify-center shadow-glow ring-2 ring-white/30 border border-white/20 group-hover:scale-110 transition-all duration-300">
                         {/* 内部光晕 */}
                         <div className="absolute inset-1 bg-gradient-to-br from-white/20 to-transparent rounded-xl"></div>
                         <User className="w-5 h-5 lg:w-6 lg:h-6 text-white relative z-10 drop-shadow-lg" />
@@ -1335,7 +1387,7 @@ export default function Chat() {
                   variant="outline"
                   size="sm"
                   onClick={() => fileInputRef.current?.click()}
-                  className="group relative flex items-center space-x-2 lg:space-x-3 md:space-x-2 sm:space-x-1 xs:space-x-1 bg-gradient-to-br from-blue-50/80 via-indigo-50/80 to-purple-50/80 backdrop-blur-md border-2 border-blue-200/60 text-blue-700 hover:from-blue-100/90 hover:to-purple-100/90 hover:border-blue-300 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 rounded-2xl px-4 py-3 md:px-3 md:py-2 sm:px-2 sm:py-2 xs:px-2 xs:py-1 overflow-hidden"
+                  className="btn-gradient group relative flex items-center space-x-2 lg:space-x-3 md:space-x-2 sm:space-x-1 xs:space-x-1 glass-effect bg-gradient-to-br from-blue-50/80 via-indigo-50/80 to-purple-50/80 backdrop-blur-md border-2 border-blue-200/60 text-blue-700 hover:from-blue-100/90 hover:to-purple-100/90 hover:border-blue-300 transition-all duration-300 shadow-glow hover:shadow-xl hover:scale-105 rounded-2xl px-4 py-3 md:px-3 md:py-2 sm:px-2 sm:py-2 xs:px-2 xs:py-1 overflow-hidden"
                 >
                   {/* 按钮光效 */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
@@ -1346,10 +1398,10 @@ export default function Chat() {
                   variant={isRecording ? "danger" : "outline"}
                   size="sm"
                   onClick={toggleRecording}
-                  className={`group relative transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 rounded-2xl px-4 py-3 md:px-3 md:py-2 sm:px-2 sm:py-2 xs:px-2 xs:py-1 overflow-hidden ${
+                  className={`btn-gradient group relative transition-all duration-300 shadow-glow hover:shadow-xl hover:scale-105 rounded-2xl px-4 py-3 md:px-3 md:py-2 sm:px-2 sm:py-2 xs:px-2 xs:py-1 overflow-hidden ${
                     isRecording 
-                      ? 'bg-gradient-to-br from-red-500 via-red-600 to-red-700 text-white animate-pulse border-2 border-red-300 ring-4 ring-red-200/50' 
-                      : 'bg-gradient-to-br from-green-50/80 via-emerald-50/80 to-teal-50/80 backdrop-blur-md border-2 border-green-200/60 text-green-700 hover:from-green-100/90 hover:to-teal-100/90 hover:border-green-300'
+                      ? 'bg-gradient-to-br from-red-500 via-red-600 to-red-700 text-white animate-breathing border-2 border-red-300 ring-4 ring-red-200/50' 
+                      : 'glass-effect bg-gradient-to-br from-green-50/80 via-emerald-50/80 to-teal-50/80 backdrop-blur-md border-2 border-green-200/60 text-green-700 hover:from-green-100/90 hover:to-teal-100/90 hover:border-green-300'
                   }`}
                 >
                   {/* 录音状态光效 */}
@@ -1385,7 +1437,7 @@ export default function Chat() {
                 onClick={handleSendMessage}
                 disabled={(!message.trim() && uploadedFiles.length === 0) || isAiProcessing || isStreaming}
                 size="sm"
-                className={`group relative shadow-xl hover:shadow-2xl transition-all duration-300 px-4 lg:px-8 md:px-6 sm:px-4 xs:px-3 py-3 lg:py-4 md:py-3 sm:py-2 xs:py-2 rounded-3xl font-semibold overflow-hidden ${
+                className={`btn-gradient group relative shadow-glow hover:shadow-2xl transition-all duration-300 px-4 lg:px-8 md:px-6 sm:px-4 xs:px-3 py-3 lg:py-4 md:py-3 sm:py-2 xs:py-2 rounded-3xl font-semibold overflow-hidden ${
                   (isAiProcessing || isStreaming)
                     ? 'bg-gradient-to-br from-gray-400 to-gray-500 text-gray-200 cursor-not-allowed' 
                     : 'bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 hover:from-blue-600 hover:via-indigo-700 hover:to-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95'

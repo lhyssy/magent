@@ -35,13 +35,7 @@
   ],
   "functions": {
     "api/index.ts": {
-      "maxDuration": 30
+      "runtime": "@vercel/node@3.0.0"
     }
-  },
-  "builds": [
-    {
-      "src": "api/index.ts",
-      "use": "@vercel/node"
-    }
-  ]
+  }
 }

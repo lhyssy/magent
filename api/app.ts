@@ -8,7 +8,6 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
 import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
 import { createServer } from 'http';
 import authRoutes from './routes/auth';
 import patientsRoutes from './routes/patients';
@@ -19,9 +18,8 @@ import agentsRoutes from './routes/agents';
 // 错误处理中间件已在下方定义
 import WebSocketService from './websocket';
 
-// for esm mode
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// for commonjs mode
+// __dirname is available in CommonJS
 
 // load env
 dotenv.config();

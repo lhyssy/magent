@@ -86,7 +86,7 @@ const depressionCase: PresetCase = {
           name: 'PHQ9_depression_questionnaire.pdf',
           type: 'application/pdf',
           size: 1048576,
-          preview: 'https://trae-api-us.mchost.guru/api/ide/v1/text_to_image?prompt=PHQ-9%20depression%20questionnaire%20assessment%20form%20with%20high%20scores%20indicating%20major%20depression%2C%20medical%20evaluation%20document&image_size=portrait_4_3',
+          preview: '',
           description: 'PHQ-9抑郁症问卷评估结果，总分19分，提示重度抑郁症状'
         }
       ],
@@ -126,7 +126,7 @@ const depressionCase: PresetCase = {
           name: 'patient_eeg_20241201.edf',
           type: 'application/edf',
           size: 2048576,
-          preview: 'https://trae-api-us.mchost.guru/api/ide/v1/text_to_image?prompt=EEG%20brainwave%20chart%20showing%20depression%20patterns%20with%20reduced%20alpha%20waves%20and%20increased%20theta%20activity%2C%20medical%20visualization%2C%20blue%20and%20green%20waveforms%20on%20dark%20background&image_size=landscape_4_3',
+          preview: '',
           description: 'EEG脑电图数据，显示抑郁症特征性的α波减少和θ波增加模式'
         }
       ],
@@ -180,7 +180,7 @@ const depressionCase: PresetCase = {
           name: 'behavioral_assessment.mp4',
           type: 'video/mp4',
           size: 15728640,
-          preview: 'https://trae-api-us.mchost.guru/api/ide/v1/text_to_image?prompt=Person%20speaking%20to%20camera%20with%20sad%20expression%2C%20clinical%20interview%20setting%2C%20soft%20lighting%2C%20professional%20medical%20environment&image_size=landscape_4_3',
+          preview: '',
           description: '患者行为评估视频，包含面部表情、语调和肢体语言分析'
         }
       ],
@@ -276,7 +276,7 @@ const anxietyCase: PresetCase = {
           name: 'anxiety_fnirs_data.mat',
           type: 'application/matlab',
           size: 5242880,
-          preview: 'https://trae-api-us.mchost.guru/api/ide/v1/text_to_image?prompt=fNIRS%20brain%20heatmap%20showing%20anxiety%20patterns%20with%20increased%20prefrontal%20cortex%20activity%2C%20red%20and%20yellow%20activation%20areas%2C%20medical%20brain%20imaging%20visualization&image_size=landscape_4_3',
+          preview: '',
           description: 'fNIRS功能性近红外光谱数据，显示焦虑状态下前额叶皮层的异常激活模式'
         }
       ],
@@ -308,7 +308,7 @@ const anxietyCase: PresetCase = {
           name: 'GAD7_results.png',
           type: 'image/png',
           size: 524288,
-          preview: 'https://trae-api-us.mchost.guru/api/ide/v1/text_to_image?prompt=GAD-7%20anxiety%20scale%20form%20with%20checkmarks%20showing%20high%20anxiety%20score%2C%20medical%20assessment%20document%2C%20clean%20clinical%20layout&image_size=portrait_4_3',
+          preview: '',
           description: 'GAD-7广泛性焦虑量表结果，总分16分，提示重度焦虑'
         }
       ],
@@ -359,7 +359,7 @@ const anxietyCase: PresetCase = {
           name: 'anxiety_description.wav',
           type: 'audio/wav',
           size: 3145728,
-          preview: 'https://trae-api-us.mchost.guru/api/ide/v1/text_to_image?prompt=Audio%20waveform%20visualization%20showing%20anxious%20speech%20patterns%2C%20irregular%20amplitude%20and%20frequency%2C%20blue%20and%20green%20sound%20waves%20on%20dark%20background&image_size=landscape_4_3',
+          preview: '',
           description: '患者焦虑症状描述音频，包含语音情感和声学特征分析'
         }
       ],
@@ -431,7 +431,7 @@ const comprehensiveCase: PresetCase = {
           name: 'bipolar_eeg_episodes.edf',
           type: 'application/edf',
           size: 4194304,
-          preview: 'https://trae-api-us.mchost.guru/api/ide/v1/text_to_image?prompt=EEG%20brainwave%20comparison%20showing%20manic%20vs%20depressive%20episodes%2C%20split%20screen%20with%20high%20amplitude%20fast%20waves%20vs%20slow%20waves%2C%20medical%20visualization&image_size=landscape_4_3',
+          preview: '',
           description: 'EEG数据对比：躁狂期vs抑郁期的脑电活动模式'
         },
         {
@@ -439,7 +439,7 @@ const comprehensiveCase: PresetCase = {
           name: 'bipolar_fnirs_states.mat',
           type: 'application/matlab',
           size: 6291456,
-          preview: 'https://trae-api-us.mchost.guru/api/ide/v1/text_to_image?prompt=fNIRS%20brain%20activation%20heatmap%20comparison%20showing%20bipolar%20disorder%20patterns%2C%20side%20by%20side%20manic%20and%20depressive%20brain%20states%2C%20colorful%20medical%20imaging&image_size=landscape_4_3',
+          preview: '',
           description: 'fNIRS数据：不同情绪状态下的前额叶皮层激活模式'
         }
       ],
@@ -472,7 +472,7 @@ const comprehensiveCase: PresetCase = {
           name: 'mood_episodes_description.mp4',
           type: 'video/mp4',
           size: 20971520,
-          preview: 'https://trae-api-us.mchost.guru/api/ide/v1/text_to_image?prompt=Person%20describing%20different%20mood%20states%2C%20split%20personality%20concept%2C%20one%20side%20energetic%20and%20happy%2C%20other%20side%20sad%20and%20tired%2C%20clinical%20setting&image_size=landscape_4_3',
+          preview: '',
           description: '患者描述不同情绪状态的视频，包含躁狂期和抑郁期的行为对比'
         }
       ],
@@ -530,7 +530,7 @@ const comprehensiveCase: PresetCase = {
           name: 'mood_disorder_scales.pdf',
           type: 'application/pdf',
           size: 1048576,
-          preview: 'https://trae-api-us.mchost.guru/api/ide/v1/text_to_image?prompt=Medical%20assessment%20forms%20showing%20mood%20disorder%20questionnaire%20results%2C%20checkboxes%20and%20scores%2C%20clinical%20documentation%2C%20professional%20layout&image_size=portrait_4_3',
+          preview: '',
           description: 'MDQ和PHQ-9量表结果，显示双相障碍的高风险评分'
         }
       ],

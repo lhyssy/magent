@@ -44,15 +44,11 @@ const MultimodalFileDisplay: React.FC<FileDisplayProps> = ({ file, onClose }) =>
     return 'Data File'
   }
 
-  // 移除预览功能，只显示文件图标和基本信息
+  // 简化文件显示，只显示文件名
   const renderFileInfo = () => {
     return (
-      <div className="w-full p-4 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-        <div className="text-center">
-          {getFileIcon()}
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 font-medium">{getFileTypeLabel()}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">文件已上传，等待处理</p>
-        </div>
+      <div className="text-center py-2">
+        <span className="text-sm text-gray-700 dark:text-gray-300">{file.name}</span>
       </div>
     )
   }
@@ -85,12 +81,6 @@ const MultimodalFileDisplay: React.FC<FileDisplayProps> = ({ file, onClose }) =>
         <div className="relative mb-3">
           {renderFileInfo()}
         </div>
-
-        {file.description && (
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-            {file.description}
-          </p>
-        )}
 
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">

@@ -11,7 +11,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/demo" element={<Demo />} />
         <Route path="/chat" element={<Chat />} />
-        <Route path="/preset-demo" element={<PresetDemoChat />} />
+        <Route path="/case-replay" element={<PresetDemoChat />} />
       </Routes>
     </Router>
   );

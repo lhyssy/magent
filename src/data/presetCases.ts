@@ -51,7 +51,7 @@ const depressionCase: PresetCase = {
       type: 'assistant',
       content: '感谢您详细描述了您的情况。我已经指派**文本与病史分析师**开始分析您的症状描述。从您的叙述中，我识别到了几个重要的抑郁症状指标：情绪低落、兴趣丧失（快感缺失）、疲劳感、睡眠障碍和注意力问题。\n\n您提到的症状持续时间（3个月）和严重程度（影响工作和社交功能）都提示需要进一步的专业评估。为了进行更准确的评估，我建议您上传一些客观的生理数据。请问您是否有最近的EEG（脑电图）数据？这将帮助我们从神经生理学角度分析您的大脑活动模式，特别是前额叶和边缘系统的功能状态。',
       timestamp: new Date(),
-      agentActivations: ['text-pathology-analyst'],
+      agentActivations: ['text-analyst'],
       delay: 3000
     },
     {
@@ -90,7 +90,7 @@ const depressionCase: PresetCase = {
           description: 'PHQ-9抑郁症问卷评估结果，总分19分，提示重度抑郁症状'
         }
       ],
-      agentActivations: ['image-analyst', 'scale-analyst', 'clinical-psychologist'],
+      agentActivations: ['image-analyst'],
       delay: 1500
     },
     {
@@ -112,7 +112,7 @@ const depressionCase: PresetCase = {
       type: 'assistant',
       content: '感谢您提供的详细信息。工作压力和人际关系问题确实是抑郁症的常见触发因素，而家族史也是重要的风险因素。我已经将这些信息整合到评估中，并启动了**心理社会因素分析师**来评估环境因素的影响。\n\n现在让我为您提供完整的抑郁症诊断分析。',
       timestamp: new Date(),
-      agentActivations: ['psychosocial-analyst'],
+      agentActivations: ['text-analyst'],
       delay: 3500
     },
     {
@@ -152,7 +152,7 @@ const depressionCase: PresetCase = {
       type: 'assistant',
       content: '感谢您的坦诚，这需要很大的勇气。您提到的早醒、体重下降和自杀意念都是重要的临床指标。我已经将这些信息标记为高优先级，并启动了**风险评估专家**来评估您的安全状况。\n\n您寻求帮助是非常正确的决定。现在让我们继续收集数据来制定最适合的治疗方案。',
       timestamp: new Date(),
-      agentActivations: ['risk-assessment-specialist'],
+      agentActivations: ['text-analyst'],
       delay: 3500
     },
     {
@@ -184,7 +184,7 @@ const depressionCase: PresetCase = {
           description: '患者行为评估视频，包含面部表情、语调和肢体语言分析'
         }
       ],
-      agentActivations: ['video-analyst', 'audio-analyst', 'physiological-data-analyst'],
+      agentActivations: ['video-analyst', 'audio-analyst'],
       delay: 2000
     },
     {
@@ -218,7 +218,7 @@ const depressionCase: PresetCase = {
       timestamp: new Date(),
       analysisResults: [
         {
-          agentId: 'risk-assessment-specialist',
+          agentId: 'text-analyst',
           result: '中等自杀风险评估',
           confidence: 0.87
         }
@@ -255,7 +255,7 @@ const anxietyCase: PresetCase = {
       type: 'assistant',
       content: '您描述的症状很典型，我已经启动**文本与病史分析师**来分析您的症状模式。从您的描述中，我识别到了广泛性焦虑和可能的惊恐发作症状，包括心悸、出汗、呼吸困难、社交焦虑和睡眠障碍。\n\n您提到的症状对日常生活的影响提示需要专业评估。为了更准确地评估您的焦虑水平和大脑功能状态，我建议您上传fNIRS（功能性近红外光谱）数据。这项检查可以实时监测您大脑前额叶皮层的血氧变化，帮助我们了解焦虑时的大脑活动模式。',
       timestamp: new Date(),
-      agentActivations: ['text-pathology-analyst'],
+      agentActivations: ['text-analyst'],
       delay: 3500
     },
     {
@@ -410,7 +410,7 @@ const comprehensiveCase: PresetCase = {
       type: 'assistant',
       content: '感谢您详细描述症状。您提到的极端情绪波动、睡眠模式剧烈变化、思维活跃度的巨大差异以及冲动行为，这些都是非常重要的临床信息。我已经启动**文本与病史分析师**来分析您的症状模式。\n\n您描述的症状高度提示双相情感障碍的可能性，特别是躁狂发作和抑郁发作的交替出现。为了进行准确的诊断，我需要了解更多信息：\n\n1. 这种情绪波动的模式大概持续多长时间了？\n2. 您的家族中是否有精神疾病史？\n3. 是否有过创伤经历或重大生活事件？\n4. 目前是否在服用任何药物？\n\n同时，为了进行多模态融合分析，我建议您提供神经影像学检查数据，包括EEG和fNIRS数据，这样我们可以从神经生理学角度进行客观评估。',
       timestamp: new Date(),
-      agentActivations: ['text-pathology-analyst'],
+      agentActivations: ['text-analyst'],
       delay: 4000
     },
     {
@@ -443,7 +443,7 @@ const comprehensiveCase: PresetCase = {
           description: 'fNIRS数据：不同情绪状态下的前额叶皮层激活模式'
         }
       ],
-      agentActivations: ['eeg-analyst', 'fnirs-analyst', 'mood-pattern-analyst'],
+      agentActivations: ['eeg-analyst', 'fnirs-analyst'],
       delay: 2000
     },
     {
@@ -451,7 +451,7 @@ const comprehensiveCase: PresetCase = {
       type: 'assistant',
       content: '收到您的多模态数据，**EEG分析师**、**fNIRS分析师**和**情绪模式分析师**正在进行并行分析。您的家族史信息非常重要，父亲的抑郁症和姑姑的双相障碍提示了遗传易感性。我已经启动**遗传风险评估师**来分析这些因素。\n\n**情绪模式分析师初步反馈**：6个月追踪数据显示明显的周期性波动，高峰期和低谷期交替出现，符合双相障碍的典型模式。\n\n为了更好地理解您的症状时间线和行为表现，请您录制一段视频，详细描述一下您在躁狂期和抑郁期的具体表现和行为变化。同时，如果您有任何生理监测数据（如心率、活动量等），也请一并提供。',
       timestamp: new Date(),
-      agentActivations: ['genetic-risk-analyst'],
+      agentActivations: ['text-analyst'],
       delay: 3000
     },
     {
@@ -494,16 +494,6 @@ const comprehensiveCase: PresetCase = {
           agentId: 'fnirs-analyst',
           result: '双相障碍脑功能模式',
           confidence: 0.89
-        },
-        {
-          agentId: 'mood-pattern-analyst',
-          result: '双相I型情绪周期',
-          confidence: 0.93
-        },
-        {
-          agentId: 'genetic-risk-analyst',
-          result: '高遗传风险',
-          confidence: 0.85
         }
       ],
       delay: 6000
@@ -515,7 +505,7 @@ const comprehensiveCase: PresetCase = {
       timestamp: new Date(),
       analysisResults: [
         {
-          agentId: 'physiological-data-analyst',
+          agentId: 'text-analyst',
           result: '双相障碍生理确认',
           confidence: 0.91
         }
@@ -579,7 +569,7 @@ const comprehensiveCase: PresetCase = {
     {
       id: 'comp-13',
       type: 'assistant',
-      content: '**多模态融合综合诊断报告**\n\n基于六维度专业分析，我的多学科专家团队达成高度一致的诊断结论：\n\n**主要诊断**：双相I型情感障碍，快速循环型（Bipolar I Disorder, Rapid Cycling）\n**诊断置信度**：96%\n**功能损害等级**：中度（GAF=55）\n\n**多维度证据支持**：\n\n**1. 临床症状学证据（置信度94%）**\n• 符合DSM-5双相I型障碍全部核心标准\n• 躁狂发作：精力过度、睡眠需求减少、思维奔逸、冲动行为\n• 抑郁发作：情绪低落、兴趣缺失、疲劳、睡眠过度\n• 发作持续时间和严重程度均达到诊断标准\n\n**2. 神经生理学证据（置信度88%）**\n• EEG：躁狂期β/γ波异常增强，抑郁期θ波增加\n• fNIRS：前额叶皮层活动呈现典型双相波动模式\n• 神经影像学特征高度符合双相障碍病理机制\n\n**3. 情绪模式分析证据（置信度93%）**\n• 6个月追踪显示4个完整情绪周期\n• 周期性模式规律，符合快速循环型特征\n• 情绪波动幅度和频率超出正常范围\n\n**4. 遗传风险评估证据（置信度85%）**\n• 父亲抑郁症史：遗传风险因子\n• 姑姑双相障碍史：直系遗传易感性\n• 家族精神疾病负荷评估：高风险等级\n\n**5. 生理指标证据（置信度91%）**\n• 心率、活动量、睡眠模式与情绪状态高度相关\n• 生理节律紊乱符合双相障碍特征\n• 客观生理数据支持主观症状报告\n\n**6. 标准化评估证据（置信度92%）**\n• MDQ：11/13分，远超诊断阈值\n• YMRS：28分，确认中度躁狂\n• PHQ-9：16分，确认中重度抑郁\n• GAF：55分，中度功能损害\n\n**治疗规划师专业建议**：\n\n**immediate优先级（紧急）**：\n• 立即转诊精神科专科医生进行药物评估\n• 建立情绪监测和危机干预计划\n• 评估自伤/自杀风险，必要时住院治疗\n\n**短期治疗目标（1-3个月）**：\n• 情绪稳定剂治疗（如锂盐、丙戊酸钠）\n• 认知行为治疗（CBT）或人际关系治疗\n• 建立规律作息和睡眠卫生\n• 家庭心理教育和支持系统建立\n\n**长期管理策略（3-12个月）**：\n• 维持性药物治疗和定期监测\n• 情绪管理技能训练\n• 职业和社会功能康复\n• 预防复发的心理社会干预\n\n**预后评估**：\n在适当治疗下，双相障碍患者可以获得良好的症状控制和功能恢复。关键在于早期识别、规范治疗和长期管理。建议定期随访，监测治疗反应和副作用。\n\n**风险提示**：\n双相障碍具有高复发风险，需要长期管理。请务必在专业医生指导下进行治疗，切勿自行停药或调整剂量。',
+      content: '**综合诊断结论**\n\n基于多学科专家团队的全面分析，我们达成一致诊断：\n\n**主要诊断**：双相I型情感障碍，快速循环型\n**诊断置信度**：96%\n**功能损害等级**：中度\n\n**核心证据**：\n• 临床症状完全符合DSM-5双相I型障碍标准\n• EEG和fNIRS数据显示典型的双相神经生理模式\n• 标准化量表评估（MDQ、YMRS、PHQ-9）均支持诊断\n• 家族遗传史提供重要风险背景\n\n**治疗建议**：\n1. **紧急措施**：立即转诊精神科专科医生\n2. **药物治疗**：情绪稳定剂（如锂盐）\n3. **心理治疗**：认知行为疗法\n4. **生活管理**：规律作息，情绪监测\n\n**预后**：通过规范治疗可获得良好的症状控制。请务必在专业医生指导下进行治疗。',
       timestamp: new Date(),
       analysisResults: [
         {
@@ -593,13 +583,6 @@ const comprehensiveCase: PresetCase = {
           confidence: 0.94
         }
       ],
-      delay: 8000
-    },
-    {
-      id: 'comp-14',
-      type: 'assistant',
-      content: '**多模态融合分析与最终诊断报告**\n\n经过我的专家团队全面协作分析，现提供综合诊断结果：\n\n**最终诊断**：双相I型情感障碍（Bipolar I Disorder）\n**诊断置信度**：96%\n\n**多维度证据融合**：\n\n🧠 **神经生理证据**：\n• EEG：躁狂期β波增加45%，抑郁期θ波增加38%\n• fNIRS：前额叶皮层激活呈现典型的双相波动模式\n• 神经影像学证据置信度：88%\n\n🎭 **行为与语音证据**：\n• 视频分析：确认躁狂期和抑郁期的行为对比特征\n• 音频分析：语音情绪呈现极端双相性变化\n• 行为学证据置信度：90%\n\n📋 **标准化评估证据**：\n• MDQ评分11分（高风险阈值≥7分）\n• PHQ-9当前评分18分（重度抑郁期）\n• 量表评估证据置信度：94%\n\n**治疗建议**：\n1. **药物治疗**：心境稳定剂（如锂盐）作为一线治疗\n2. **心理治疗**：认知行为疗法和家庭治疗\n3. **生活方式**：规律作息，避免诱发因素\n4. **监测方案**：定期EEG和fNIRS监测，评估治疗效果\n\n**预后评估**：通过规范治疗，可有效控制情绪波动，显著改善生活质量。\n\n**重要提醒**：请尽快就医，本分析报告可作为专业医生诊疗的重要参考。',
-      timestamp: new Date(),
       delay: 8000
     }
   ]

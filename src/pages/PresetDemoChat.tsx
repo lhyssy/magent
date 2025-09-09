@@ -266,7 +266,7 @@ export default function PresetDemoChat() {
         </div>
         
         {/* 顶部控制栏 */}
-        <div className="relative z-10 backdrop-blur-xl bg-white/10 border-b border-white/20 p-4 shadow-lg">
+        <div className="sticky top-0 z-20 bg-gradient-to-r from-purple-900/95 to-blue-900/95 backdrop-blur-xl border-b border-white/10 pt-6 pb-4 px-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Button
@@ -318,7 +318,7 @@ export default function PresetDemoChat() {
 
         {/* 控制面板 */}
         {showControls && (
-          <div className="relative z-10 backdrop-blur-xl bg-white/5 border-b border-white/10 p-4 shadow-lg">
+          <div className="relative z-30 backdrop-blur-xl bg-white/5 border-b border-white/10 p-4 shadow-lg">
             <div className="flex items-center justify-center space-x-4">
               <Button
                 onClick={handleStepBackward}
@@ -378,7 +378,7 @@ export default function PresetDemoChat() {
         )}
 
         {/* 消息区域 */}
-        <div className="relative z-10 flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="relative z-10 flex-1 overflow-y-auto pt-8 px-6 pb-6 space-y-6">
           {demoMessages.map((msg, index) => (
             <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-4xl ${msg.type === 'user' ? 'order-2' : 'order-1'}`}>

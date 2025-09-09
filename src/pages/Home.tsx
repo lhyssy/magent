@@ -13,39 +13,39 @@ const Home: React.FC = () => {
     {
       id: 'depression',
       title: '抑郁症诊断分析',
-      description: '通过文本情感分析和音频语调检测，结合多模态数据进行抑郁症风险评估',
+      description: '基于多模态智能体协作的抑郁症风险评估，整合文本、音频、脑功能等数据源',
       icon: Brain,
       color: 'from-blue-500 to-blue-600',
       bgColor: 'bg-blue-50',
       iconColor: 'text-blue-600',
-      features: ['文本情感分析', '音频语调检测', 'fNIRS脑功能成像']
+      features: ['文本分析师', '音频分析师', '图像分析师']
     },
     {
       id: 'anxiety',
       title: '焦虑症评估',
-      description: '基于视频面部表情识别和EEG脑电信号分析，精准评估焦虑症状严重程度',
+      description: '通过多模态分析师协作，从文本、音频、视频等维度全面评估焦虑症状',
       icon: Zap,
       color: 'from-purple-500 to-purple-600',
       bgColor: 'bg-purple-50',
       iconColor: 'text-purple-600',
-      features: ['视频表情识别', 'EEG脑电分析', '生理指标监测']
+      features: ['文本分析师', '音频分析师', '视频分析师']
     },
     {
       id: 'comprehensive',
       title: '综合心理健康评估',
-      description: '整合所有模态数据，提供全面的心理健康状况评估和个性化建议',
+      description: '多智能体协作的综合心理健康评估，提供全方位的心理状态分析报告',
       icon: Heart,
       color: 'from-green-500 to-green-600',
       bgColor: 'bg-green-50',
       iconColor: 'text-green-600',
-      features: ['多模态数据融合', '智能体协作分析', '个性化建议']
+      features: ['多模态融合', '智能体协作', '综合评估']
     }
   ];
 
   // 处理案例点击 - 跳转到预设演示
   const handleCaseClick = (caseData: typeof demosCases[0]) => {
     // 跳转到预设演示页面
-    navigate('/preset-demo', { 
+    navigate('/case-replay', { 
       state: { 
         caseType: caseData.id 
       } 
@@ -87,7 +87,7 @@ const Home: React.FC = () => {
                   disabled 
                   className="px-10 py-4 text-lg bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-2xl shadow-2xl cursor-not-allowed opacity-60 backdrop-blur-sm border border-white/10"
                 >
-                  正在实现中
+                  正在升级中
                 </Button>
                 <Button 
                   disabled 
